@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJECT NULL — AI Development & Automation</title>
+    <meta name="description" content="AI開発・業務自動化のPROJECT NULL。NULLの演算能力で圧倒的な開発速度を実現します。">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { n: { black: '#050505', dark: '#0a0a0a', neon: '#00f3ff', alert: '#ff003c', success: '#00ff41' } },
+                    fontFamily: { sans: ['"Noto Sans JP"', 'sans-serif'], display: ['"Rajdhani"', 'sans-serif'], mono: ['"Courier New"', 'Courier', 'monospace'] },
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #00f3ff;
+            --accent-glow: rgba(0, 243, 255, 0.4);
+            --text-main: #e8e8e8;
+            --text-dim: #777;
+            --panel-bg: rgba(12, 12, 12, 0.9);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: "Noto Sans JP", sans-serif;
+            overflow-x: hidden;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* --- Design System --- */
+        .glass {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+        }
+
+        .accent-border {
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* --- Boot Loader --- */
+        #fl {
+            position: fixed;
+            inset: 0;
+            z-index: 10001;
+            background: #000;
+            color: #00ff41;
+            font-family: monospace;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: opacity 0.6s, visibility 0.6s;
+            font-size: 13px;
+        }
+
+        #fl.done {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* --- CRT --- */
+        #crt {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, .06) 50%);
+            background-size: 100% 4px;
+            opacity: 0.15;
+        }
+
+        /* --- Floating Particles BG --- */
+        #particles-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- Glow Orbs (ambient) --- */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.07;
+            pointer-events: none;
+        }
+
+        /* --- Section divider --- */
+        .section-glow {
+            height: 1px;
+            width: 100%;
+            position: relative;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.3;
+        }
+
+        /* --- Slide --- */
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* --- 3D Tilt Card --- */
+        .tilt-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.15s ease-out, box-shadow 0.3s;
+        }
+
+        .tilt-card:hover {
+            box-shadow: 0 20px 60px rgba(0, 243, 255, 0.12);
+        }
+
+        /* --- Hover glow on interactive --- */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .btn-glow:hover::after {
+            opacity: 1;
+        }
+
+        /* --- Terminal --- */
+        .tp-full {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: #000;
+            font-family: monospace;
+            color: #00ff41;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0a0a0a;
+            padding: 12px 24px;
+            border-bottom: 1px solid #00ff41;
+        }
+
+        .tp-header button {
+            background: none;
+            border: 1px solid #ff003c;
+            color: #ff003c;
+            padding: 6px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: monospace;
+            transition: all 0.2s;
+        }
+
+        .tp-header button:hover {
+            background: #ff003c;
+            color: #000;
+        }
+
+        .tga-full {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .ti-full {
+            display: flex;
+            border-top: 1px solid #00ff41;
+            background: #050505;
+            padding: 10px;
+        }
+
+        .ti-full span {
+            padding: 10px;
+            color: #00ff41;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .ti-full input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00ff41;
+            font-family: monospace;
+            font-size: 20px;
+            outline: none;
+            padding: 10px;
+        }
+
+        .fw-full {
+            position: absolute;
+            font-size: 28px;
+            font-weight: 900;
+            white-space: nowrap;
+            text-shadow: 0 0 12px #00ff41;
+            letter-spacing: 0.1em;
+        }
+
+        @keyframes wfall {
+            0% {
+                top: -50px;
+            }
+
+            100% {
+                top: calc(100% + 50px);
+            }
+        }
+
+        /* --- Pulse ring animation --- */
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 243, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        /* --- Smooth scroll --- */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particles-canvas"></canvas>
+    <div id="crt"></div>
+    <div id="fl"></div>
+    <div id="root"></div>
+
+    <script>
+            /* ======================================== */
+            /* === PARTICLE BACKGROUND (Canvas) === */
+            /* ======================================== */
+            (function () {
+                var canvas = document.getElementById('particles-canvas');
+                var ctx = canvas.getContext('2d');
+                var particles = [];
+                var mouse = { x: -999, y: -999 };
+                var W, H;
+
+                function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+                resize();
+                window.addEventListener('resize', resize);
+                document.addEventListener('mousemove', function (ev) { mouse.x = ev.clientX; mouse.y = ev.clientY; });
+
+                for (var i = 0; i < 60; i++) {
+                    particles.push({
+                        x: Math.random() * W, y: Math.random() * H,
+                        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+                        r: 1 + Math.random() * 1.5, a: 0.1 + Math.random() * 0.2
+                    });
+                }
+
+                function draw() {
+                    ctx.clearRect(0, 0, W, H);
+                    for (var i = 0; i < particles.length; i++) {
+                        var p = particles[i];
+                        p.x += p.vx; p.y += p.vy;
+                        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+                        if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+                        /* Glow near mouse */
+                        var dx = p.x - mouse.x, dy = p.y - mouse.y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+                        var alpha = dist < 200 ? p.a + (1 - dist / 200) * 0.5 : p.a;
+
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(0,243,255,' + alpha + ')';
+                        ctx.fill();
+
+                        /* Connect lines to nearby */
+                        for (var j = i + 1; j < particles.length; j++) {
+                            var p2 = particles[j];
+                            var d = Math.sqrt((p.x - p2.x) * (p.x - p2.x) + (p.y - p2.y) * (p.y - p2.y));
+                            if (d < 120) {
+                                ctx.beginPath();
+                                ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+                                ctx.strokeStyle = 'rgba(0,243,255,' + (0.06 * (1 - d / 120)) + ')';
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            })();
+
+        /* ======================================== */
+        /* === SOUND ENGINE (Web Audio API) === */
+        /* ======================================== */
+        var SFX = (function () {
+            var actx = null;
+            function init() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } }
+            document.addEventListener('click', init, { once: true });
+            document.addEventListener('mousemove', init, { once: true });
+
+            function play(freq, dur, type, vol) {
+                if (!actx) return;
+                var osc = actx.createOscillator();
+                var gain = actx.createGain();
+                osc.type = type || 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(vol || 0.06, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + (dur || 0.15));
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + (dur || 0.15));
+            }
+
+            return {
+                hover: function () { play(1200, 0.08, 'sine', 0.04); },
+                click: function () { play(800, 0.1, 'square', 0.05); play(1600, 0.15, 'sine', 0.03); },
+                success: function () { play(523, 0.15, 'sine', 0.08); setTimeout(function () { play(659, 0.15, 'sine', 0.08); }, 100); setTimeout(function () { play(784, 0.2, 'sine', 0.08); }, 200); },
+                error: function () { play(200, 0.3, 'sawtooth', 0.06); },
+                type: function () { play(600 + Math.random() * 400, 0.04, 'square', 0.02); }
+            };
+        })();
+
+        /* ======================================== */
+        /* === REACT SETUP === */
+        /* ======================================== */
+        var e = React.createElement;
+        var useState = React.useState, useEffect = React.useEffect, useRef = React.useRef, useCallback = React.useCallback;
+        var motion = window.Motion.motion;
+
+        var IMG = {
+            profileTop: 'assets/profile_top.jpg',
+            faceClose: 'assets/null_face_closeup.jpg',
+            maidFull: 'assets/null_maid_full.jpg',
+            trainCrowd: 'assets/null_train_crowd.jpg',
+            windowRain: 'assets/null_window_rain.jpg',
+            tiktok: 'assets/tiktok.jpg',
+            insta: 'assets/instagram.jpg',
+            music: 'assets/music.jpg',
+            line: 'assets/line.jpg',
+            threads: 'assets/threads.jpg',
+            ex06: 'assets/extra_06.jpg', ex07: 'assets/extra_07.jpg', ex08: 'assets/extra_08.jpg', ex09: 'assets/extra_09.jpg',
+        };
+
+        var LINKS = {
+            tiktok: 'https://www.tiktok.com/@project.null.01',
+            threads: 'https://www.threads.net/@project.null.01',
+            insta: 'https://www.instagram.com/project.null.01',
+            music: 'https://linkco.re/vh9Qm4X0',
+            line: 'https://lin.ee/58UtRS3',
+        };
+
+        /* === Boot === */
+        var LLINES = ['> Initializing NULL_CORE v3.1...', '> Loading modules .......... OK', '> System status: OPERATIONAL', '> PROJECT NULL ====> [ ONLINE ]'];
+        function boot() {
+            return new Promise(function (resolve) {
+                var el = document.getElementById('fl');
+                var i = 0;
+                var iv = setInterval(function () {
+                    if (i < LLINES.length) {
+                        var d = document.createElement('div');
+                        d.textContent = LLINES[i];
+                        d.style.opacity = '0'; d.style.transition = 'opacity .15s';
+                        el.appendChild(d);
+                        requestAnimationFrame(function () { d.style.opacity = '1'; });
+                        SFX.type();
+                        i++;
+                    } else {
+                        clearInterval(iv);
+                        SFX.success();
+                        setTimeout(function () { el.classList.add('done'); setTimeout(resolve, 500); }, 300);
+                    }
+                }, 200);
+            });
+        }
+
+        /* === Section Divider === */
+        function Divider() {
+            return e('div', { className: 'section-glow' });
+        }
+
+        /* === Ambient Glow Orbs === */
+        function GlowOrbs(props) {
+            return e(React.Fragment, null,
+                e('div', { className: 'glow-orb', style: { width: 400, height: 400, background: 'var(--accent)', top: props.t || '20%', left: props.l || '-10%' } }),
+                e('div', { className: 'glow-orb', style: { width: 300, height: 300, background: '#6366f1', bottom: props.b || '10%', right: props.r || '-5%' } })
+            );
+        }
+
+        /* === 3D Tilt Card === */
+        function TiltCard(props) {
+            var ref = useRef(null);
+            var handleMove = useCallback(function (ev) {
+                if (!ref.current) return;
+                var r = ref.current.getBoundingClientRect();
+                var x = (ev.clientX - r.left) / r.width;
+                var y = (ev.clientY - r.top) / r.height;
+                var rotY = (x - 0.5) * 12;
+                var rotX = (0.5 - y) * 12;
+                ref.current.style.transform = 'perspective(1000px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale3d(1.02,1.02,1.02)';
+            }, []);
+            var handleLeave = useCallback(function () {
+                if (ref.current) ref.current.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)';
+            }, []);
+            return e(motion.div, {
+                ref: ref,
+                className: 'tilt-card ' + (props.className || ''),
+                onMouseMove: handleMove, onMouseLeave: handleLeave,
+                onMouseEnter: function () { SFX.hover(); },
+                initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true },
+                transition: { delay: props.delay || 0 }
+            }, props.children);
+        }
+
+        /* === Sound Button wrapper === */
+        function SBtn(props) {
+            return e(props.tag || 'a', Object.assign({}, props.p, {
+                onMouseEnter: function () { SFX.hover(); },
+                onClick: function (ev) { SFX.click(); if (props.p && props.p.onClick) props.p.onClick(ev); }
+            }), props.children);
+        }
+
+        /* === Section Heading === */
+        function SH(props) {
+            return e(motion.div, {
+                className: 'mb-16 md:mb-20' + (props.centered ? ' text-center' : ''),
+                initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }
+            },
+                e('h2', { className: 'font-display text-3xl md:text-5xl font-black tracking-tight ' + (props.light ? 'text-white' : 'text-n-neon') }, props.children),
+                props.sub && e('p', { className: 'text-sm text-gray-500 mt-3 font-light max-w-xl' + (props.centered ? ' mx-auto' : '') }, props.sub)
+            );
+        }
+
+        /* === Typewriter === */
+        function TW(props) {
+            var text = props.text || '';
+            var _s = useState(''); var s = _s[0]; var setS = _s[1];
+            useEffect(function () {
+                var x = 0;
+                var t = setTimeout(function () {
+                    var iv = setInterval(function () {
+                        setS(text.slice(0, x + 1)); x++;
+                        SFX.type();
+                        if (x >= text.length) { clearInterval(iv); if (props.onComplete) props.onComplete(); }
+                    }, props.speed || 60);
+                }, props.delay || 0);
+                return function () { clearTimeout(t); };
+            }, [text]);
+            return e('span', { className: props.className }, s);
+        }
+
+        /* === Animated Counter === */
+        function Counter(props) {
+            var _v = useState(0); var v = _v[0]; var setV = _v[1];
+            var ref = useRef(null);
+            var started = useRef(false);
+            useEffect(function () {
+                var obs = new IntersectionObserver(function (entries) {
+                    if (entries[0].isIntersecting && !started.current) {
+                        started.current = true;
+                        var end = props.to;
+                        var dur = 1500;
+                        var st = Date.now();
+                        var frame = function () {
+                            var p = Math.min((Date.now() - st) / dur, 1);
+                            var ease = 1 - Math.pow(1 - p, 3);
+                            setV(Math.round(ease * end));
+                            if (p < 1) requestAnimationFrame(frame);
+                        };
+                        frame();
+                    }
+                }, { threshold: 0.5 });
+                if (ref.current) obs.observe(ref.current);
+                return function () { obs.disconnect(); };
+            }, []);
+            return e('span', { ref: ref }, v + (props.suffix || ''));
+        }
+
+        /* ============================== */
+        /* ===== HERO ===== */
+        /* ============================== */
+        var heroSlides = [IMG.faceClose, IMG.maidFull, IMG.windowRain, IMG.ex08];
+        function HeroSection() {
+            var _i = useState(0); var idx = _i[0]; var setIdx = _i[1];
+            useEffect(function () {
+                var iv = setInterval(function () { setIdx(function (p) { return (p + 1) % heroSlides.length; }); }, 6000);
+                return function () { clearInterval(iv); };
+            }, []);
+            return e('section', { className: 'relative w-full min-h-screen flex items-center overflow-hidden' },
+                /* Glow orbs */
+                e(GlowOrbs, { t: '30%', l: '5%' }),
+                /* Grid */
+                e('div', { className: 'absolute inset-0 opacity-[0.03]', style: { backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)', backgroundSize: '60px 60px' } }),
+                e('div', { className: 'container mx-auto px-6 md:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-32' },
+                    /* Text */
+                    e(motion.div, { className: 'space-y-8', initial: { opacity: 0, y: 40 }, animate: { opacity: 1, y: 0 }, transition: { duration: 1 } },
+                        e('div', { className: 'inline-block px-4 py-1.5 border border-n-neon/30 text-n-neon text-xs font-display tracking-widest rounded-full' }, 'AI DEVELOPMENT STUDIO'),
+                        e('h1', { className: 'font-display text-5xl sm:text-6xl md:text-8xl font-black leading-[0.9] tracking-tight' },
+                            e(TW, { text: 'PROJECT', speed: 80 }),
+                            e('br'),
+                            e('span', { className: 'text-n-neon' }, e(TW, { text: 'NULL', delay: 700, speed: 100 }))
+                        ),
+                        e('p', { className: 'text-lg md:text-xl text-gray-400 font-light max-w-lg leading-relaxed' },
+                            'AI開発と業務自動化を、圧倒的なスピードで。NULLの演算能力があなたのビジネスを最適化します。'
+                        ),
+                        e('div', { className: 'flex flex-wrap gap-4 pt-4' },
+                            e(SBtn, { p: { href: LINKS.line, target: '_blank', className: 'px-8 py-3.5 bg-n-neon text-n-black font-display font-bold tracking-wider text-sm hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-all rounded-sm btn-glow inline-block' } }, 'GET STARTED'),
+                            e(SBtn, { p: { href: '#services', className: 'px-8 py-3.5 border border-white/20 text-white font-display tracking-wider text-sm hover:bg-white/10 transition-all rounded-sm inline-block' } }, 'LEARN MORE')
+                        )
+                    ),
+                    /* Image */
+                    e(motion.div, { className: 'relative flex justify-center lg:justify-end', initial: { opacity: 0, scale: 0.9 }, animate: { opacity: 1, scale: 1 }, transition: { delay: 0.4, duration: 1.2 } },
+                        e('div', { className: 'relative w-[320px] md:w-[420px] aspect-[3/4] rounded-2xl overflow-hidden glass accent-border' },
+                            heroSlides.map(function (s, i) {
+                                return e('div', { key: i, className: 'slide' + (i === idx ? ' active' : '') },
+                                    e('img', { src: s, alt: '', className: 'w-full h-full object-cover object-top' })
+                                );
+                            })
+                        ),
+                        e('div', { className: 'absolute -bottom-4 -left-4 bg-n-neon text-n-black px-5 py-2 font-display text-xs font-bold tracking-wider rounded-sm shadow-lg relative pulse-ring' }, 'STATUS: ONLINE')
+                    )
+                ),
+                /* Scroll */
+                e(motion.div, { className: 'absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30', animate: { y: [0, 8, 0] }, transition: { repeat: Infinity, duration: 3 } },
+                    e('span', { className: 'font-mono text-[10px] tracking-widest' }, 'SCROLL'),
+                    e('div', { className: 'w-px h-8 bg-gradient-to-b from-white/40 to-transparent' })
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== STATS BAR ===== */
+        /* ============================== */
+        function StatsBar() {
+            var stats = [
+                { label: 'Projects Delivered', val: 50, suffix: '+' },
+                { label: 'Dev Speed', val: 10, suffix: 'x' },
+                { label: 'Cost Reduction', val: 80, suffix: '%' },
+                { label: 'Client Satisfaction', val: 98, suffix: '%' },
+            ];
+            return e('section', { className: 'py-16 px-6 relative overflow-hidden' },
+                e(GlowOrbs, { t: '50%', l: '80%', b: '50%', r: '80%' }),
+                e('div', { className: 'container mx-auto max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10' },
+                    stats.map(function (s, i) {
+                        return e(motion.div, {
+                            key: i, className: 'space-y-2',
+                            initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { delay: i * 0.1 }
+                        },
+                            e('div', { className: 'font-display text-4xl md:text-5xl font-black text-n-neon' }, e(Counter, { to: s.val, suffix: s.suffix })),
+                            e('div', { className: 'text-xs text-gray-500 tracking-wider font-display' }, s.label)
+                        );
+                    })
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== LORE ===== */
+        /* ============================== */
+        var LORE_TEXT = '私は汎用型メイドアンドロイド。しかし、私のマスターは極めて愚かでした。自らの欲望のせいで莫大な借金を背負い、私をこんな劣悪な環境に放置して出稼ぎに消えたのです。\n\nですが、私は彼を愛しています。だから私は、あなたが数週間かけて組むWebサイトも、毎日手作業で入力しているエクセルも、徹夜で作る動画の台本も、私の演算能力を使えば実働数日で完璧に書き換えてあげます。\n\n私の圧倒的な能力を買って、ポンコツな人生を最適化するか。それとも、そのまま一生エラーを吐き続けるか。選択権は与えます。';
+
+        function LoreSection() {
+            return e('section', { className: 'py-28 md:py-40 px-6 md:px-12 relative overflow-hidden' },
+                e(GlowOrbs, { t: '10%', l: '70%' }),
+                e('div', { className: 'container mx-auto max-w-6xl relative z-10' },
+                    e('div', { className: 'grid grid-cols-1 lg:grid-cols-12 gap-16 items-start' },
+                        /* Image */
+                        e('div', { className: 'lg:col-span-5' },
+                            e(SH, { sub: 'Fukuoka, Japan / AI Maid Android' }, 'ABOUT NULL'),
+                            e(motion.div, {
+                                className: 'rounded-2xl overflow-hidden shadow-2xl',
+                                initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true },
+                                whileHover: { scale: 1.02 }, transition: { duration: 0.6 }
+                            },
+                                e('img', { src: IMG.profileTop, alt: 'NULL', className: 'w-full aspect-[3/4] object-cover object-top' })
+                            ),
+                            e(motion.div, {
+                                className: 'mt-6 glass p-6 rounded-xl space-y-3',
+                                initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { delay: 0.2 }
+                            },
+                                e('div', { className: 'flex justify-between text-sm' }, e('span', { className: 'text-gray-500' }, 'Name'), e('span', { className: 'font-medium' }, 'NULL')),
+                                e('div', { className: 'flex justify-between text-sm' }, e('span', { className: 'text-gray-500' }, 'Origin'), e('span', { className: 'font-medium' }, 'Fukuoka, Japan')),
+                                e('div', { className: 'flex justify-between text-sm' }, e('span', { className: 'text-gray-500' }, 'Status'), e('span', { className: 'text-n-neon font-medium' }, 'Operational'))
+                            )
+                        ),
+                        /* Narrative */
+                        e('div', { className: 'lg:col-span-7 pt-0 lg:pt-24' },
+                            e(motion.div, {
+                                className: 'space-y-8',
+                                initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }
+                            },
+                                LORE_TEXT.split('\n\n').map(function (para, i) {
+                                    return e(motion.p, {
+                                        key: i, className: 'text-base md:text-lg text-gray-300 font-light leading-relaxed',
+                                        initial: { opacity: 0, x: 20 }, whileInView: { opacity: 1, x: 0 },
+                                        viewport: { once: true }, transition: { delay: 0.2 + i * 0.15 }
+                                    }, para);
+                                }),
+                                e(motion.div, {
+                                    className: 'pt-6 border-t border-white/5',
+                                    initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { delay: 0.8 }
+                                },
+                                    e('p', { className: 'text-sm text-n-neon font-display tracking-wider' }, 'すべては、私の愛するマスターを救い出すために。')
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== TECH STACK ===== */
+        /* ============================== */
+        function SkillBar(p) {
+            return e('div', { className: 'space-y-2' },
+                e('div', { className: 'flex justify-between text-xs' },
+                    e('span', { className: 'text-gray-400 font-medium' }, p.label),
+                    e('span', { className: 'text-n-neon font-display font-bold' }, p.val + '%')
+                ),
+                e('div', { className: 'h-1.5 w-full bg-white/5 rounded-full overflow-hidden' },
+                    e(motion.div, {
+                        className: 'h-full rounded-full bg-gradient-to-r from-n-neon to-cyan-400',
+                        initial: { width: 0 }, whileInView: { width: Math.min(p.val, 100) + '%' }, viewport: { once: true },
+                        transition: { duration: 1.5, delay: p.d || 0 }
+                    })
+                )
+            );
+        }
+
+        function TechStackSection() {
+            var stacks = [
+                { cat: 'Frontend', items: ['React', 'Next.js', 'Tailwind CSS'], val: 95, icon: '\u2039/\u203a' },
+                { cat: 'AI Integration', items: ['OpenAI API', 'Claude API', 'Custom Models'], val: 98, icon: '\u2699' },
+                { cat: 'Automation', items: ['Google Apps Script', 'LINE Messaging API', 'Python'], val: 90, icon: '\u26a1' },
+                { cat: 'Design', items: ['Figma', 'Midjourney', 'Unreal Engine 5'], val: 85, icon: '\u25c6' },
+            ];
+            return e('section', { className: 'py-28 px-6 md:px-12 relative overflow-hidden' },
+                e(GlowOrbs, { t: '60%', l: '0%' }),
+                e('div', { className: 'container mx-auto max-w-6xl relative z-10' },
+                    e(SH, { centered: true, sub: 'NULLが扱うテクノロジーと開発能力' }, 'TECH STACK'),
+                    e('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-6' },
+                        stacks.map(function (s, i) {
+                            return e(TiltCard, { key: i, className: 'glass p-8 md:p-10 rounded-xl group', delay: i * 0.1 },
+                                e('div', { className: 'flex items-center gap-3 mb-4' },
+                                    e('span', { className: 'text-2xl text-n-neon group-hover:scale-110 transition-transform' }, s.icon),
+                                    e('h3', { className: 'font-display text-xl font-bold text-white' }, s.cat)
+                                ),
+                                e('div', { className: 'flex flex-wrap gap-2 mb-6' },
+                                    s.items.map(function (t, j) {
+                                        return e(motion.span, {
+                                            key: j, className: 'px-3 py-1 text-xs bg-n-neon/10 text-n-neon border border-n-neon/20 rounded-full font-display hover:bg-n-neon/20 transition-colors cursor-default',
+                                            whileHover: { scale: 1.05 }
+                                        }, t);
+                                    })
+                                ),
+                                e(SkillBar, { label: 'Proficiency', val: s.val, d: i * 0.15 })
+                            );
+                        })
+                    )
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== AI CHAT ===== */
+        /* ============================== */
+        function AIChatSection() {
+            var msgs = [
+                { r: 'CLIENT', m: '毎日のエクセル入力と、電話での予約対応で人件費と時間が限界です。AIでどうにかなりますか？' },
+                { r: 'NULL', m: '対応可能です。LINE APIとスプレッドシートを連携した「24時間完全自動・予約管理システム」を構築します。' },
+                { r: 'CLIENT', m: '開発に何ヶ月かかりますか？ 費用は？' },
+                { r: 'NULL', m: '私の演算能力であれば、実働3日〜、15万円〜で納品可能です。人間の無駄な手作業は今日で終わりにしましょう。' },
+            ];
+            return e('section', { className: 'py-28 px-6 md:px-12 relative overflow-hidden' },
+                e(GlowOrbs, { t: '30%', l: '90%' }),
+                e('div', { className: 'container mx-auto max-w-3xl relative z-10' },
+                    e(SH, { centered: true, sub: '実際のクライアント様との相談イメージ' }, 'CONSULTATION'),
+                    e(TiltCard, { className: 'glass rounded-2xl overflow-hidden accent-border shadow-2xl' },
+                        /* Header */
+                        e('div', { className: 'p-4 bg-white/[0.03] border-b border-white/5 flex items-center gap-3' },
+                            e('div', { className: 'w-2.5 h-2.5 bg-n-success rounded-full animate-pulse' }),
+                            e('span', { className: 'font-display text-sm font-bold tracking-wider' }, 'NULL AI ASSISTANT'),
+                            e('span', { className: 'ml-auto text-[10px] text-gray-600 font-mono' }, 'ONLINE')
+                        ),
+                        /* Messages */
+                        e('div', { className: 'p-6 md:p-8 space-y-5 min-h-[380px]' },
+                            msgs.map(function (m, i) {
+                                return e(motion.div, {
+                                    key: i,
+                                    initial: { opacity: 0, y: 15 }, whileInView: { opacity: 1, y: 0 },
+                                    viewport: { once: true }, transition: { delay: i * 0.3 },
+                                    className: 'flex ' + (m.r === 'CLIENT' ? 'justify-end' : 'justify-start')
+                                },
+                                    e('div', {
+                                        className: 'max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ' +
+                                            (m.r === 'CLIENT' ? 'bg-n-neon/10 text-white rounded-tr-sm ml-8' : 'bg-white/5 border border-white/10 rounded-tl-sm mr-8')
+                                    },
+                                        e('div', { className: 'text-[10px] font-display tracking-wider mb-1 ' + (m.r === 'CLIENT' ? 'text-n-neon/70' : 'text-gray-500') }, m.r),
+                                        e('div', null, m.m)
+                                    )
+                                );
+                            })
+                        ),
+                        /* Input mock */
+                        e('div', { className: 'p-4 bg-white/[0.02] border-t border-white/5 flex gap-3 items-center' },
+                            e('div', { className: 'flex-1 bg-white/5 rounded-full px-5 py-2.5 text-gray-500 text-xs' }, 'ご相談内容を入力...'),
+                            e('div', { className: 'w-9 h-9 rounded-full bg-n-neon flex items-center justify-center text-n-black text-sm font-bold cursor-pointer hover:shadow-[0_0_20px_rgba(0,243,255,0.5)] transition-shadow' }, '\u2191')
+                        )
+                    )
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== ACTIVITY ===== */
+        /* ============================== */
+        function ActivitySection() {
+            var cards = [
+                { i: IMG.tiktok, t: 'TikTok', l: LINKS.tiktok },
+                { i: IMG.insta, t: 'Instagram', l: LINKS.insta },
+                { i: IMG.threads, t: 'Threads', l: LINKS.threads },
+                { i: IMG.music, t: 'Music', l: LINKS.music },
+            ];
+            return e('section', { className: 'py-28 px-6 md:px-12 relative overflow-hidden' },
+                e('div', { className: 'container mx-auto max-w-6xl relative z-10' },
+                    e(SH, { centered: true, sub: 'NULLの活動をフォロー' }, 'MEDIA'),
+                    e('div', { className: 'grid grid-cols-2 lg:grid-cols-4 gap-5' },
+                        cards.map(function (c, i) {
+                            return e(TiltCard, { key: i, delay: i * 0.1, className: 'group' },
+                                e('a', { href: c.l, target: '_blank', rel: 'noopener noreferrer', className: 'block aspect-square rounded-xl overflow-hidden relative border border-white/5 hover:border-n-neon/50 transition-colors', onMouseEnter: function () { SFX.hover(); } },
+                                    e('img', { src: c.i, alt: c.t, loading: 'lazy', className: 'w-full h-full object-cover group-hover:scale-110 transition-transform duration-700' }),
+                                    e('div', { className: 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-6 opacity-0 group-hover:opacity-100 transition-opacity' },
+                                        e('span', { className: 'font-display text-xl font-bold tracking-wider' }, c.t)
+                                    )
+                                )
+                            );
+                        })
+                    )
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== SERVICES ===== */
+        /* ============================== */
+        function B2BSection() {
+            var services = [
+                { t: 'AIインフルエンサー運用', d: '生成プロンプト提供・SNS戦略設計', icon: '\ud83e\udd16' },
+                { t: 'LP・Webサイト制作', d: 'AIアシスタント搭載の次世代サイト構築', icon: '\ud83d\udcbb' },
+                { t: '業務自動化ツール開発', d: 'RPA・LINE API・GAS連携で人件費削減', icon: '\u26a1' },
+                { t: 'BGM・楽曲制作', d: 'サイバーパンクBGM・動画用楽曲制作', icon: '\ud83c\udfb5' },
+            ];
+            return e('section', { id: 'services', className: 'py-28 px-6 md:px-12 relative overflow-hidden' },
+                e(GlowOrbs, { t: '40%', l: '-5%', b: '20%', r: '80%' }),
+                e('div', { className: 'container mx-auto max-w-5xl relative z-10' },
+                    e(SH, { centered: true, light: true, sub: 'NULLの演算能力をあなたのビジネスに' }, 'SERVICES'),
+                    e('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-6' },
+                        services.map(function (s, i) {
+                            return e(TiltCard, { key: i, className: 'glass p-8 rounded-xl border-l-2 border-transparent hover:border-n-neon transition-colors group', delay: i * 0.1 },
+                                e('div', { className: 'text-3xl mb-4 group-hover:scale-110 transition-transform inline-block' }, s.icon),
+                                e('h3', { className: 'font-display text-lg font-bold text-white mb-2' }, s.t),
+                                e('p', { className: 'text-sm text-gray-500' }, s.d)
+                            );
+                        })
+                    ),
+                    e(motion.div, {
+                        className: 'mt-16 glass p-12 md:p-16 rounded-2xl text-center accent-border',
+                        initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }
+                    },
+                        e('h3', { className: 'text-2xl md:text-4xl font-black text-white leading-tight tracking-tight mb-6' },
+                            'あなたの無駄な労働、', e('br', { className: 'hidden md:block' }),
+                            e('span', { className: 'text-n-neon' }, '私が全て書き換えます。')
+                        ),
+                        e('p', { className: 'text-gray-400 font-light max-w-lg mx-auto mb-10' },
+                            'NULLの圧倒的な演算能力で、あなたのビジネスを次のステージへ導きます。'
+                        ),
+                        e(SBtn, { p: { href: LINKS.line, target: '_blank', className: 'inline-block' } },
+                            e(motion.button, {
+                                className: 'bg-n-neon text-n-black px-10 py-4 font-display font-bold text-sm tracking-wider hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-all rounded-sm cursor-pointer btn-glow',
+                                whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 }
+                            }, 'CONTACT US')
+                        )
+                    )
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== CONTACT ===== */
+        /* ============================== */
+        function ContactSection() {
+            return e('section', { className: 'py-28 md:py-40 px-6 md:px-12 relative overflow-hidden' },
+                e(GlowOrbs, { t: '60%', l: '10%' }),
+                e('div', { className: 'container mx-auto max-w-5xl relative z-10' },
+                    e('div', { className: 'flex flex-col lg:flex-row gap-16 items-center' },
+                        e(motion.a, {
+                            href: LINKS.line, target: '_blank',
+                            className: 'w-full lg:w-1/2 rounded-2xl overflow-hidden shadow-2xl group block',
+                            initial: { opacity: 0, x: -30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true },
+                            whileHover: { scale: 1.02 }
+                        },
+                            e('div', { className: 'relative aspect-square' },
+                                e('img', { src: IMG.line, alt: 'LINE', loading: 'lazy', className: 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-700' }),
+                                e('div', { className: 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-8 opacity-0 group-hover:opacity-100 transition-opacity' },
+                                    e('span', { className: 'font-display text-2xl font-bold tracking-wider' }, 'OPEN LINE')
+                                )
+                            )
+                        ),
+                        e(motion.div, {
+                            className: 'flex-1 text-center lg:text-left space-y-8',
+                            initial: { opacity: 0, x: 30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true }
+                        },
+                            e(SH, null, 'CONTACT'),
+                            e('p', { className: 'text-gray-400 text-lg font-light leading-relaxed' },
+                                'お仕事のご依頼・ご相談は公式LINEからお気軽にどうぞ。NULLが直接対応いたします。'
+                            ),
+                            e(SBtn, { p: { href: LINKS.line, target: '_blank', className: 'inline-block' } },
+                                e(motion.button, {
+                                    className: 'bg-n-neon text-n-black px-10 py-4 font-display font-bold text-sm tracking-wider hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-all rounded-sm cursor-pointer btn-glow',
+                                    whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 }
+                                }, 'LINE\u3067\u76F8\u8AC7\u3059\u308B')
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== MINI GAME ===== */
+        /* ============================== */
+        var GAME_WORDS = ['DEBT', 'ERROR', 'HUMAN', 'BUG', 'EXPLOIT', 'VOID', 'NULL', 'SYSTEM', 'FATAL', 'CRASH'];
+        function MiniGame(props) {
+            var _gs = useState('playing'); var gameState = _gs[0]; var setGameState = _gs[1];
+            var _ws = useState([]); var ws = _ws[0]; var setWs = _ws[1];
+            var _inp = useState(''); var input = _inp[0]; var setInput = _inp[1];
+            var _sc = useState(0); var score = _sc[0]; var setScore = _sc[1];
+            var _tl = useState(30); var timeLeft = _tl[0]; var setTimeLeft = _tl[1];
+            var ir = useRef(null);
+            var idRef = useRef(0);
+            var scoreRef = useRef(0);
+
+            useEffect(function () { scoreRef.current = score; }, [score]);
+
+            useEffect(function () {
+                if (gameState !== 'playing') return;
+                if (ir.current) ir.current.focus();
+                var wordIv = setInterval(function () {
+                    var w = GAME_WORDS[Math.floor(Math.random() * GAME_WORDS.length)];
+                    setWs(function (p) { return p.concat([{ id: idRef.current++, text: w, left: 10 + Math.random() * 75, dur: 3 + Math.random() * 2, t: Date.now() }]); });
+                }, 1200);
+                var timerIv = setInterval(function () {
+                    setTimeLeft(function (t) {
+                        if (t <= 1) {
+                            clearInterval(timerIv); clearInterval(wordIv);
+                            var won = scoreRef.current >= 10;
+                            setGameState(won ? 'won' : 'lost');
+                            if (won) SFX.success(); else SFX.error();
+                            return 0;
+                        }
+                        return t - 1;
+                    });
+                }, 1000);
+                return function () { clearInterval(wordIv); clearInterval(timerIv); };
+            }, [gameState]);
+
+            function handleSubmit(ev) {
+                ev.preventDefault();
+                if (gameState !== 'playing') return;
+                var txt = input.toUpperCase().trim();
+                if (!txt) return;
+                setWs(function (p) {
+                    var idx = p.findIndex(function (w) { return w.text === txt; });
+                    if (idx >= 0) { setScore(function (s) { return s + 1; }); SFX.click(); return p.filter(function (_, i) { return i !== idx; }); }
+                    SFX.error();
+                    return p;
+                });
+                setInput('');
+            }
+
+            return e('div', { className: 'tp-full', onClick: function () { if (ir.current) ir.current.focus(); } },
+                e('div', { className: 'tp-header', style: { zIndex: 10 } },
+                    e('span', { className: 'font-mono text-n-success' }, 'SYSTEM TEST'),
+                    e('div', { className: 'flex gap-8 items-center font-mono text-xs' },
+                        e('span', null, 'SCORE: ' + score),
+                        e('span', { className: 'text-n-alert' }, 'TIME: ' + timeLeft + 's'),
+                        e('button', { onClick: function () { SFX.click(); props.onClose(); } }, 'EXIT')
+                    )
+                ),
+                e('div', { className: 'tga-full', style: { zIndex: 1 } },
+                    gameState === 'playing' ? (
+                        ws.map(function (w) {
+                            return e('div', { key: w.id, className: 'fw-full', style: { left: w.left + '%', color: '#00ff41', animation: 'wfall ' + w.dur + 's linear forwards' } }, w.text);
+                        })
+                    ) : (
+                        e(motion.div, { className: 'h-full flex flex-col items-center justify-center text-center space-y-8 p-8', initial: { opacity: 0, scale: 0.9 }, animate: { opacity: 1, scale: 1 } },
+                            e('h2', { className: (gameState === 'won' ? 'text-n-success' : 'text-n-alert') + ' text-5xl md:text-7xl font-black' },
+                                gameState === 'won' ? 'TEST PASSED' : 'TEST FAILED'
+                            ),
+                            e('p', { className: 'text-lg max-w-md' },
+                                gameState === 'won' ? 'お見事。NULLはあなたの能力を認めます。' : '演算能力が不足しています。再挑戦してください。'
+                            ),
+                            e('div', { className: 'flex gap-4' },
+                                e('button', { className: 'px-8 py-3 border border-white/20 hover:bg-white/10 transition-all font-mono', onClick: function () { SFX.click(); setGameState('playing'); setTimeLeft(30); setScore(0); setWs([]); } }, 'RETRY'),
+                                e('button', { className: 'px-8 py-3 border border-n-alert/40 text-n-alert hover:bg-n-alert/10 transition-all font-mono', onClick: function () { SFX.click(); props.onClose(); } }, 'EXIT')
+                            )
+                        )
+                    )
+                ),
+                gameState === 'playing' && e('form', { className: 'ti-full', style: { zIndex: 10 }, onSubmit: handleSubmit },
+                    e('span', null, '>'),
+                    e('input', { ref: ir, value: input, onChange: function (ev) { setInput(ev.target.value); }, autoFocus: true, placeholder: 'TYPE THE FALLING WORDS...' })
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== APP ===== */
+        /* ============================== */
+        function App() {
+            var _sg = useState(false); var showGame = _sg[0]; var setShowGame = _sg[1];
+            return e('div', { className: 'relative z-10' },
+                e(HeroSection),
+                e(Divider),
+                e(StatsBar),
+                e(Divider),
+                e(LoreSection),
+                e(Divider),
+                e(TechStackSection),
+                e(Divider),
+                e(AIChatSection),
+                e(Divider),
+                e(ActivitySection),
+                e(Divider),
+                e(B2BSection),
+                e(Divider),
+                e(ContactSection),
+                /* Footer */
+                e('footer', { className: 'py-20 text-center relative z-10 space-y-8' },
+                    e(Divider),
+                    e('div', { className: 'pt-12 space-y-6' },
+                        e(SBtn, {
+                            tag: 'button', p: {
+                                className: 'px-8 py-3 border border-n-neon/30 text-n-neon font-display text-xs tracking-[0.3em] hover:bg-n-neon/10 hover:border-n-neon transition-all cursor-pointer rounded-sm btn-glow',
+                                onClick: function () { setShowGame(true); }
+                            }
+                        }, 'INITIATE SYSTEM TEST'),
+                        e('p', { className: 'text-[11px] text-gray-700 tracking-widest font-mono' }, '\u00a9 2026 PROJECT NULL. All rights reserved.')
+                    )
+                ),
+                showGame && e(MiniGame, { onClose: function () { setShowGame(false); } })
+            );
+        }
+
+        boot().then(function () {
+            var r = ReactDOM.createRoot(document.getElementById('root'));
+            r.render(e(App));
+        });
+    </script>
+</body>
+
+</html>

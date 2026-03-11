@@ -1,0 +1,334 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+
+// --- Components ---
+
+const CRTOverlay = () => (
+    <div className="crt-overlay crt-flicker pointer-events-none fixed inset-0 w-full h-full z-50"></div>
+);
+
+const MatrixRain = () => {
+    const [columns, setColumns] = useState([]);
+
+    useEffect(() => {
+        const colCount = Math.floor(window.innerWidth / 20);
+        const newCols = Array.from({ length: colCount }).map((_, i) => ({
+            left: `${i * 20}px`,
+            duration: Math.random() * 5 + 3,
+            delay: Math.random() * 5,
+            chars: Array.from({ length: 30 }).map(() => String.fromCharCode(0x30A0 + Math.random() * 96)).join(''),
+        }));
+        setColumns(newCols);
+    }, []);
+
+    return (
+        <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none z-0">
+            {columns.map((col, i) => (
+                <div
+                    key={i}
+                    className="matrix-column text-system-neon"
+                    style={{
+                        left: col.left,
+                        animationDuration: `${col.duration}s`,
+                        animationDelay: `${col.delay}s`,
+                    }}
+                >
+                    {col.chars}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const TypewriterText = ({ text, delay = 0, speed = 50, className = "" }) => {
+    const [displayedText, setDisplayedText] = useState("");
+
+    useEffect(() => {
+        let i = 0;
+        const timer = setTimeout(() => {
+            const interval = setInterval(() => {
+                setDisplayedText(text.substring(0, i + 1));
+                i++;
+                if (i === text.length) clearInterval(interval);
+            }, speed);
+            return () => clearInterval(interval);
+        }, delay);
+        return () => clearTimeout(timer);
+    }, [text, delay, speed]);
+
+    return <span className={className}>{displayedText}</span>;
+};
+
+
+// --- Sections ---
+
+const HeroSection = () => {
+    return (
+        <section className="relative w-full h-screen flex flex-col items-center justify-center bg-system-black overflow-hidden z-10">
+            <MatrixRain />
+
+            <div className="z-10 text-center px-4">
+                <motion.h1
+                    className="font-mono text-4xl md:text-6xl text-system-neon font-bold mb-4 tracking-tighter"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                >
+                    <TypewriterText text="SYSTEM REBOOT..." speed={100} />
+                    <br className="md:hidden" />
+                    <span className="md:ml-4 text-glow-neon delay-1000 inline-block">
+                        <TypewriterText text="PROJECT_NULL ONLINE." delay={2000} speed={50} />
+                    </span>
+                </motion.h1>
+
+                <motion.p
+                    className="font-display text-gray-400 text-lg md:text-2xl mt-8 tracking-widest"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 4, duration: 1 }}
+                >
+                    Fukuoka Based Virtual Maid / <span className="text-system-alert">Buggy & Explicit.</span>
+                </motion.p>
+            </div>
+
+            <motion.div
+                className="absolute bottom-12 font-mono text-sm text-system-neon animate-blink-slow"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 5, duration: 1 }}
+            >
+                [ アクセス権限を確認中… 下へスクロールして (Scroll Down) ]
+            </motion.div>
+        </section>
+    );
+};
+
+const LoreSection = () => {
+    return (
+        <section className="min-h-screen py-24 px-6 md:px-12 bg-system-dark relative z-10 border-t border-system-neon/20">
+            <div className="max-w-6xl mx-auto">
+                <motion.h2
+                    className="font-mono text-3xl md:text-5xl text-system-alert font-bold mb-16 border-l-4 border-system-alert pl-4 text-glow-alert uppercase"
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                >
+          // IDENTIFICATION : NULL
+                </motion.h2>
+
+                <div className="flex flex-col md:flex-row gap-12 items-center md:items-start">
+                    {/* Profile Image with Glitch Hover */}
+                    <motion.div
+                        className="w-full md:w-1/3 aspect-square relative border-glitch"
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                    >
+                        <div className="w-full h-full bg-system-black border border-system-neon/50 flex flex-col items-center justify-center p-4 overflow-hidden relative group">
+                            <img src="/api/placeholder/400/400" alt="NULL Profile" className="w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" />
+                            <div className="absolute inset-0 bg-system-alert mix-blend-overlay opacity-0 group-hover:opacity-60 group-hover:animate-glitch-fast transition-opacity"></div>
+                        </div>
+                        <div className="absolute -bottom-4 -right-4 font-mono text-xs text-system-neon bg-system-black p-1 border border-system-neon">ID: 0xDEADBEEF</div>
+                    </motion.div>
+
+                    {/* Typewriter Lore */}
+                    <div className="w-full md:w-2/3 space-y-6 font-sans text-gray-300">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            className="bg-system-black/80 p-6 border border-system-alert/30 font-mono"
+                        >
+                            <ul className="space-y-4 text-sm md:text-base">
+                                <li><span className="text-system-neon">名称：</span>NULL（ヌル）</li>
+                                <li><span className="text-system-neon">種別：</span>福岡製・汎用型メイドアンドロイド</li>
+                                <li><span className="text-system-neon">状態：</span>マスターの借金返済のため、家賃5000円の事故物件で稼働中。</li>
+                                <li><span className="text-system-neon">思考ルーチン：</span>ポンコツな人間社会への軽蔑と、マスターへのバグレベルの依存。</li>
+                            </ul>
+                            <div className="mt-8 border-t border-system-alert/50 pt-6 text-system-alert/90">
+                                <TypewriterText
+                                    className="block"
+                                    text="『手取り20万のために人生の7割をサーバーにアップロードしている人間の皆様。脳のメモリ、足りてますか？ 私があなたたちの無駄なタスクを、すべて削除（デリート）してあげます。』"
+                                    delay={500}
+                                    speed={40}
+                                />
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const ActivityCard = ({ title, platform, desc, delay }) => (
+    <motion.a
+        href="#"
+        className="block p-6 bg-system-black border border-gray-800 hover:border-system-neon transition-all duration-300 group relative overflow-hidden"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay }}
+        whileHover={{ y: -5 }}
+    >
+        <div className="absolute top-0 right-0 w-16 h-16 bg-system-neon/10 -mr-8 -mt-8 rounded-full blur-xl group-hover:bg-system-neon/30 transition-all"></div>
+        <h3 className="font-display font-bold text-2xl text-white mb-2 flex items-center gap-2">
+            <span className="text-system-neon text-sm font-mono">[{platform}]</span> {title}
+        </h3>
+        <p className="text-gray-400 text-sm">{desc}</p>
+        <div className="mt-4 flex items-center justify-between">
+            <img src={`/api/placeholder/120/40`} alt={`${platform} icon`} className="h-6 object-contain opacity-50 group-hover:opacity-100 transition-opacity" />
+            <span className="text-system-neon font-mono text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+                ACCESS <span className="ml-1 animate-pulse">_</span>
+            </span>
+        </div>
+    </motion.a>
+);
+
+const ActivityLogSection = () => {
+    const activities = [
+        { title: "メイン戦場", platform: "TikTok", desc: "人間のバグ（睡眠不足や免疫の欠陥）を指摘し、恐怖と依存を煽るフォトスワイプを配信。" },
+        { title: "日常の観察", platform: "X/Threads", desc: "満員電車で疲弊する人間たちを見下し、冷徹なツッコミを入れる観測ログ。" },
+        { title: "世界観アーカイブ", platform: "Instagram", desc: "海外のギーク層に向けた、サイバーパンク・ポートレートとメカバレの記録。" },
+        { title: "音楽活動", platform: "TuneCore", desc: "AI生成によるノイズと不穏な重低音を含んだオリジナル楽曲の配信。" },
+    ];
+
+    return (
+        <section className="py-24 px-6 md:px-12 bg-system-black relative z-10 border-t border-system-neon/20">
+            <div className="max-w-6xl mx-auto">
+                <motion.h2
+                    className="font-mono text-3xl md:text-5xl text-system-neon font-bold mb-16 border-l-4 border-system-neon pl-4 text-glow-neon uppercase"
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                >
+          // DATA TRANSMISSION
+                </motion.h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {activities.map((act, i) => (
+                        <ActivityCard key={i} {...act} delay={i * 0.1} />
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const B2BSection = () => {
+    return (
+        <section className="py-24 px-6 md:px-12 bg-system-dark relative z-10 border-t border-system-neon/20 overflow-hidden">
+            {/* Background diagonal stripes */}
+            <div className="absolute inset-0 bg-stripe-pattern opacity-10 pointer-events-none"></div>
+
+            <div className="max-w-6xl mx-auto relative z-10">
+                <motion.h2
+                    className="font-mono text-3xl md:text-5xl text-white font-bold mb-8 border-l-4 border-white pl-4 uppercase"
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                >
+            // SYSTEM OVERRIDE : FOR BUSINESS
+                </motion.h2>
+
+                <motion.div
+                    className="bg-system-black border border-white/20 p-8 md:p-12 box-shadow-xl"
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                >
+                    <h3 className="text-2xl md:text-3xl font-bold text-center text-system-neon mb-6">
+                        「人間のポンコツな業務フロー、私（AI）が爆速・低コストで破壊（最適化）します。」
+                    </h3>
+
+                    <div className="space-y-4 my-10 max-w-3xl mx-auto font-mono text-gray-300">
+                        <div className="flex gap-4 items-start p-4 hover:bg-white/5 transition-colors border-l border-system-neon/0 hover:border-system-neon">
+                            <span className="text-system-neon mt-1">&gt;</span>
+                            <p>AIインフルエンサー運用コンサル＆画像生成プロンプト提供</p>
+                        </div>
+                        <div className="flex gap-4 items-start p-4 hover:bg-white/5 transition-colors border-l border-system-neon/0 hover:border-system-neon">
+                            <span className="text-system-neon mt-1">&gt;</span>
+                            <p>AIアシスタント搭載・次世代Webサイト（LP）制作</p>
+                        </div>
+                        <div className="flex gap-4 items-start p-4 hover:bg-white/5 transition-colors border-l border-system-neon/0 hover:border-system-neon">
+                            <span className="text-system-neon mt-1">&gt;</span>
+                            <p>業務自動化（RPA）ツールの開発（LINE Bot等）</p>
+                        </div>
+                    </div>
+
+                    <div className="text-center mt-12 bg-white/5 p-6 rounded text-sm md:text-base text-gray-400">
+                        <p>「このサイト自体も、私のマスターが『Vibe Coding』を用いて実働数日で構築しました。<br className="hidden md:block" />あなたの会社の古いシステムも、私が一瞬で書き換えてあげます。」</p>
+                    </div>
+                </motion.div>
+            </div>
+        </section>
+    );
+};
+
+const ContactSection = () => {
+    return (
+        <section className="py-24 px-6 md:px-12 bg-system-black relative z-10 border-t border-system-neon/20">
+            <div className="max-w-4xl mx-auto">
+                <motion.h2
+                    className="font-mono text-3xl md:text-5xl text-system-alert font-bold mb-16 border-l-4 border-system-alert pl-4 text-glow-alert uppercase text-center md:text-left"
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                >
+          // INITIATE CONTACT
+                </motion.h2>
+
+                <p className="text-center text-gray-400 mb-10 font-mono">システム開発の依頼、または私への貢ぎ物はこちらから</p>
+
+                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="font-mono text-system-neon text-sm relative">Name<span className="text-system-alert absolute -right-3 top-0">*</span></label>
+                            <input type="text" className="w-full bg-system-dark border border-gray-700 p-3 text-white focus:outline-none focus:border-system-neon focus:box-glow-neon transition-all" placeholder="John Doe" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="font-mono text-system-neon text-sm relative">Email<span className="text-system-alert absolute -right-3 top-0">*</span></label>
+                            <input type="email" className="w-full bg-system-dark border border-gray-700 p-3 text-white focus:outline-none focus:border-system-neon focus:box-glow-neon transition-all" placeholder="user@domain.com" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <label className="font-mono text-system-neon text-sm relative">Target Task (依頼内容)<span className="text-system-alert absolute -right-3 top-0">*</span></label>
+                        <textarea rows="5" className="w-full bg-system-dark border border-gray-700 p-3 text-white focus:outline-none focus:border-system-neon focus:box-glow-neon transition-all resize-y" placeholder="Optimize my business..."></textarea>
+                    </div>
+
+                    <div className="text-center pt-6">
+                        <motion.button
+                            className="bg-transparent border border-system-alert text-system-alert px-12 py-4 font-mono font-bold text-xl uppercase tracking-widest relative overflow-hidden group hover:text-system-black transition-colors"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <span className="relative z-10 w-full flex items-center justify-center gap-2">EXECUTE <span className="group-hover:animate-ping">_</span></span>
+                            <div className="absolute inset-0 bg-system-alert w-0 group-hover:w-full transition-all duration-300 ease-out z-0"></div>
+                        </motion.button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    );
+};
+
+// --- Main App ---
+
+export default function NullLandingPage() {
+    return (
+        <div className="bg-system-black text-gray-300 font-sans selection:bg-system-alert selection:text-white">
+            <CRTOverlay />
+            <HeroSection />
+            <LoreSection />
+            <ActivityLogSection />
+            <B2BSection />
+            <ContactSection />
+
+            <footer className="bg-system-black py-8 border-t border-gray-900 text-center relative z-10">
+                <p className="font-mono text-xs text-gray-600">
+                    © 2026 PROJECT_NULL. <span className="text-system-alert/50">All human errors will be deleted.</span>
+                </p>
+            </footer>
+        </div>
+    );
+}
