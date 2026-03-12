@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROJECT NULL — AI Development & Automation</title>
     <meta name="description" content="AI開発・業務自動化のPROJECT NULL。NULLの演算能力で圧倒的な開発速度を実現します。">
+    <!-- Meta tags for OG/Twitter -->
+    <meta property="og:title" content="PROJECT NULL — AI Development & Automation">
+    <meta property="og:description" content="AI開発・業務自動化のPROJECT NULL。NULLの演算能力で圧倒的な開発速度を実現します。">
+    <meta property="og:image" content="https://prd.storage.lit.link/images/creators/ade30664-a719-49ea-87be-d3623759213d/ogp/ogp_image.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PROJECT NULL — AI Development & Automation">
+    <meta name="twitter:description" content="AI開発・業務自動化のPROJECT NULL。NULLの演算能力で圧倒的な開発速度を実現します。">
+    <meta name="twitter:image" content="https://prd.storage.lit.link/images/creators/ade30664-a719-49ea-87be-d3623759213d/ogp/ogp_image.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,13 +40,16 @@
 
     <style>
         :root {
-            --bg: #050505;
+            --bg: #030303;
             --accent: #00f3ff;
-            --accent-glow: rgba(0, 243, 255, 0.4);
-            --text-main: #e8e8e8;
-            --text-dim: #777;
-            --panel-bg: rgba(12, 12, 12, 0.9);
-            --border: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(0, 243, 255, 0.5);
+            --accent-soft: rgba(0, 243, 255, 0.15);
+            --alert: #ff003c;
+            --alert-glow: rgba(255, 0, 60, 0.4);
+            --text-main: #f0f0f0;
+            --text-dim: #888;
+            --panel-bg: rgba(10, 10, 10, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -53,7 +65,30 @@
             overflow-x: hidden;
             line-height: 1.7;
             -webkit-font-smoothing: antialiased;
+            cursor: none;
         }
+
+        a, button, input {
+            cursor: none;
+        }
+
+        /* --- Custom Cursor --- */
+        #custom-cursor {
+            position: fixed; top: 0; left: 0; width: 6px; height: 6px;
+            background: var(--accent); border-radius: 50%;
+            pointer-events: none; z-index: 100000;
+            box-shadow: 0 0 10px var(--accent);
+            transition: transform 0.1s, background 0.3s;
+        }
+        #custom-cursor-ring {
+            position: fixed; top: 0; left: 0; width: 36px; height: 36px;
+            border: 1px solid var(--accent-glow); border-radius: 50%;
+            pointer-events: none; z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s, border-color 0.2s;
+        }
+        body.hovering #custom-cursor { transform: scale(1.5); background: var(--alert); box-shadow: 0 0 15px var(--alert); }
+        body.hovering #custom-cursor-ring { width: 50px; height: 50px; border-color: var(--alert-glow); background: rgba(255,0,60,0.1); }
 
         ::selection {
             background: var(--accent);
@@ -63,13 +98,22 @@
         /* --- Design System --- */
         .glass {
             background: var(--panel-bg);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
         .accent-border {
             border: 1px solid var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
+            box-shadow: 0 0 25px var(--accent-glow), inset 0 0 10px var(--accent-soft);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .alert-glow {
+            text-shadow: 0 0 10px var(--alert-glow);
         }
 
         /* --- Boot Loader --- */
@@ -99,10 +143,36 @@
             inset: 0;
             z-index: 10000;
             pointer-events: none;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, .06) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0,0,0,0.1) 50%);
             background-size: 100% 4px;
             opacity: 0.15;
         }
+
+        /* --- Scanline Animation --- */
+        .scanline {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(0deg, transparent 0%, rgba(0, 243, 255, 0.05) 50%, transparent 100%);
+            background-size: 100% 200px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* --- Mouse Trace Canvas --- */
+        #trace-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- Video Background (Removed global, shifted to component) --- */
 
         /* --- Floating Particles BG --- */
         #particles-canvas {
@@ -150,7 +220,7 @@
         }
 
         .tilt-card:hover {
-            box-shadow: 0 20px 60px rgba(0, 243, 255, 0.12);
+            box-shadow: 0 20px 80px rgba(0, 243, 255, 0.25), inset 0 0 20px var(--accent-soft);
         }
 
         /* --- Hover glow on interactive --- */
@@ -298,6 +368,39 @@
             border-radius: 2px;
         }
 
+        /* --- Glitch --- */
+        @keyframes glitch {
+            0% { clip: rect(44px, 9999px, 56px, 0); transform: skew(0.3deg); }
+            5% { clip: rect(70px, 9999px, 20px, 0); transform: skew(0.5deg); }
+            10% { clip: rect(12px, 9999px, 90px, 0); transform: skew(0.2deg); }
+            15% { clip: rect(85px, 9999px, 10px, 0); transform: skew(0.4deg); }
+            20% { clip: rect(33px, 9999px, 76px, 0); transform: skew(0.1deg); }
+            100% { clip: rect(44px, 9999px, 56px, 0); transform: skew(0.3deg); }
+        }
+
+        .glitch-hover:hover {
+            animation: glitch 0.3s steps(2, start) infinite;
+            text-shadow: 2px 0 var(--accent), -2px 0 var(--alert);
+        }
+
+        /* --- video section --- */
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+        }
+
         /* --- Smooth scroll --- */
         html {
             scroll-behavior: smooth;
@@ -306,12 +409,34 @@
 </head>
 
 <body>
-    <canvas id="particles-canvas"></canvas>
     <div id="crt"></div>
+    <div class="scanline"></div>
+    <div id="custom-cursor"></div>
+    <div id="custom-cursor-ring"></div>
+    <canvas id="trace-canvas"></canvas>
+    <canvas id="particles-canvas"></canvas>
     <div id="fl"></div>
     <div id="root"></div>
 
     <script>
+        /* === Custom Cursor Logic === */
+        (function() {
+            var c = document.getElementById('custom-cursor');
+            var r = document.getElementById('custom-cursor-ring');
+            var mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+            var ringX = mouseX, ringY = mouseY;
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX; mouseY = e.clientY;
+                c.style.transform = 'translate(' + (mouseX-3) + 'px, ' + (mouseY-3) + 'px)';
+            });
+            function anim() {
+                ringX += (mouseX - ringX) * 0.2;
+                ringY += (mouseY - ringY) * 0.2;
+                r.style.transform = 'translate(' + ringX + 'px, ' + ringY + 'px) translate(-50%, -50%)';
+                requestAnimationFrame(anim);
+            }
+            requestAnimationFrame(anim);
+        })();
             /* ======================================== */
             /* === PARTICLE BACKGROUND (Canvas) === */
             /* ======================================== */
@@ -398,6 +523,49 @@
                 error: function () { play(200, 0.3, 'sawtooth', 0.06); },
                 type: function () { play(600 + Math.random() * 400, 0.04, 'square', 0.02); }
             };
+        })();
+
+        /* ======================================== */
+        /* === MOUSE TRACE (Canvas) === */
+        /* ======================================== */
+        (function() {
+            var canvas = document.getElementById('trace-canvas');
+            var ctx = canvas.getContext('2d');
+            var points = [];
+            var maxPoints = 25;
+
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            document.addEventListener('mousemove', function(e) {
+                points.push({ x: e.clientX, y: e.clientY, age: 0 });
+            });
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (points.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[0].x, points[0].y);
+                    for (var i = 1; i < points.length; i++) {
+                        ctx.lineTo(points[i].x, points[i].y);
+                    }
+                    ctx.strokeStyle = 'rgba(0, 243, 255, 0.4)';
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = '#00f3ff';
+                    ctx.stroke();
+                }
+
+                for (var i = 0; i < points.length; i++) {
+                    points[i].age++;
+                }
+                points = points.filter(p => p.age < maxPoints);
+                requestAnimationFrame(animate);
+            }
+            animate();
         })();
 
         /* ======================================== */
@@ -566,6 +734,12 @@
                 return function () { clearInterval(iv); };
             }, []);
             return e('section', { className: 'relative w-full min-h-screen flex items-center overflow-hidden' },
+                /* Background Image Loop (100 points integration) */
+                heroSlides.map(function(s, i) {
+                    return e('div', { key: 'bg-'+i, className: 'absolute inset-0 bg-cover bg-center transition-opacity duration-1000 z-[-2] ' + (i === idx ? 'opacity-30' : 'opacity-0'), style: { backgroundImage: 'url(' + s + ')' } });
+                }),
+                /* Dark overlay (Premium gradient) */
+                e('div', { className: 'absolute inset-0 bg-gradient-to-br from-black/90 via-[#030303]/70 to-black/90 z-[-1] pointer-events-none' }),
                 /* Glow orbs */
                 e(GlowOrbs, { t: '30%', l: '5%' }),
                 /* Grid */
@@ -577,13 +751,13 @@
                         e('h1', { className: 'font-display text-5xl sm:text-6xl md:text-8xl font-black leading-[0.9] tracking-tight' },
                             e(TW, { text: 'PROJECT', speed: 80 }),
                             e('br'),
-                            e('span', { className: 'text-n-neon' }, e(TW, { text: 'NULL', delay: 700, speed: 100 }))
+                            e('span', { className: 'text-n-neon text-glow' }, e(TW, { text: 'NULL', delay: 700, speed: 100 }))
                         ),
                         e('p', { className: 'text-lg md:text-xl text-gray-400 font-light max-w-lg leading-relaxed' },
                             'AI開発と業務自動化を、圧倒的なスピードで。NULLの演算能力があなたのビジネスを最適化します。'
                         ),
                         e('div', { className: 'flex flex-wrap gap-4 pt-4' },
-                            e(SBtn, { p: { href: LINKS.line, target: '_blank', className: 'px-8 py-3.5 bg-n-neon text-n-black font-display font-bold tracking-wider text-sm hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-all rounded-sm btn-glow inline-block' } }, 'GET STARTED'),
+                            e(SBtn, { p: { href: LINKS.line, target: '_blank', className: 'px-8 py-3.5 bg-n-neon text-n-black font-display font-bold tracking-wider text-sm hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-all rounded-sm btn-glow inline-block glitch-hover' } }, 'GET STARTED'),
                             e(SBtn, { p: { href: '#services', className: 'px-8 py-3.5 border border-white/20 text-white font-display tracking-wider text-sm hover:bg-white/10 transition-all rounded-sm inline-block' } }, 'LEARN MORE')
                         )
                     ),
@@ -596,13 +770,41 @@
                                 );
                             })
                         ),
-                        e('div', { className: 'absolute -bottom-4 -left-4 bg-n-neon text-n-black px-5 py-2 font-display text-xs font-bold tracking-wider rounded-sm shadow-lg relative pulse-ring' }, 'STATUS: ONLINE')
-                    )
+                        e('div', { className: 'absolute -bottom-4 right-4 bg-n-black/80 backdrop-blur-md border border-n-neon text-n-neon px-5 py-2 font-display text-xs font-bold tracking-wider rounded-sm shadow-lg pulse-ring' }, 'STATUS: ONLINE')
+                    ),
                 ),
                 /* Scroll */
                 e(motion.div, { className: 'absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30', animate: { y: [0, 8, 0] }, transition: { repeat: Infinity, duration: 3 } },
                     e('span', { className: 'font-mono text-[10px] tracking-widest' }, 'SCROLL'),
                     e('div', { className: 'w-px h-8 bg-gradient-to-b from-white/40 to-transparent' })
+                )
+            );
+        }
+
+        /* ============================== */
+        /* ===== CM VIDEO SECTION ===== */
+        /* ============================== */
+        function CMSection() {
+            return e('section', { className: 'py-28 px-6 relative' },
+                e('div', { className: 'container mx-auto max-w-5xl' },
+                    e(SH, { centered: true, sub: 'PROJECT NULL Concept Movie' }, 'CONCEPT CM'),
+                    e(motion.div, {
+                        className: 'video-container accent-border shadow-[0_0_50px_rgba(0,243,255,0.15)] group relative',
+                        initial: { opacity: 0, y: 30 },
+                        whileInView: { opacity: 1, y: 0 },
+                        viewport: { once: true },
+                        transition: { duration: 1 }
+                    },
+                        e('video', { className: 'w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700', autoPlay: true, muted: true, loop: true, playsInline: true },
+                            e('source', { src: 'assets/cm_video.mp4', type: 'video/mp4' })
+                        ),
+                        e('div', { className: 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none' }),
+                        e('div', { className: 'video-overlay opacity-50 group-hover:opacity-20 transition-opacity duration-700' }),
+                        /* 100 points detail: REC marker in video */
+                        e('div', { className: 'absolute top-4 right-4 flex items-center gap-2 font-mono text-[10px] text-n-alert tracking-widest' },
+                            e('div', { className: 'w-2 h-2 rounded-full bg-n-alert animate-pulse' }), 'REC'
+                        )
+                    )
                 )
             );
         }
@@ -647,11 +849,16 @@
                         e('div', { className: 'lg:col-span-5' },
                             e(SH, { sub: 'Fukuoka, Japan / AI Maid Android' }, 'ABOUT NULL'),
                             e(motion.div, {
-                                className: 'rounded-2xl overflow-hidden shadow-2xl',
+                                className: 'relative rounded-2xl overflow-hidden shadow-2xl accent-border',
                                 initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true },
                                 whileHover: { scale: 1.02 }, transition: { duration: 0.6 }
                             },
-                                e('img', { src: IMG.profileTop, alt: 'NULL', className: 'w-full aspect-[3/4] object-cover object-top' })
+                                e('img', { src: IMG.profileTop, alt: 'NULL', className: 'w-full aspect-[3/4] object-cover object-top' }),
+                                e('div', { className: 'absolute top-0 right-0 w-32 h-32 opacity-30 pointer-events-none mix-blend-screen overflow-hidden' },
+                                    e('video', { className: 'w-full h-full object-cover', autoPlay: true, muted: true, loop: true, playsInline: true },
+                                        e('source', { src: 'assets/NULL/Girl_motionless_data_cables_pulse_delpmaspu_.mp4', type: 'video/mp4' })
+                                    )
+                                )
                             ),
                             e(motion.div, {
                                 className: 'mt-6 glass p-6 rounded-xl space-y-3',
@@ -680,6 +887,36 @@
                                     initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { delay: 0.8 }
                                 },
                                     e('p', { className: 'text-sm text-n-neon font-display tracking-wider' }, 'すべては、私の愛するマスターを救い出すために。')
+                                ),
+                                /* System Diagnostics Panel */
+                                e(motion.div, {
+                                    className: 'mt-10 glass p-6 rounded-xl border border-white/5',
+                                    initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { delay: 1.0 }
+                                },
+                                    e('h4', { className: 'font-display text-sm tracking-widest text-gray-500 mb-4 flex items-center gap-2' },
+                                        e('span', { className: 'w-1.5 h-1.5 rounded-full bg-n-success animate-pulse' }),
+                                        'SYSTEM DIAGNOSTICS'
+                                    ),
+                                    e('div', { className: 'space-y-4' },
+                                        e('div', null,
+                                            e('div', { className: 'flex justify-between text-xs font-mono mb-1 text-gray-400' }, e('span', null, 'CPU_LOAD'), e('span', { className: 'text-n-neon' }, '1.2%')),
+                                            e('div', { className: 'h-1 w-full bg-white/5 rounded-full overflow-hidden' },
+                                                e(motion.div, { className: 'h-full bg-n-neon w-[1.2%]', animate: { width: ['1.2%', '6%', '2.4%', '1.2%'] }, transition: { repeat: Infinity, duration: 2, ease: "easeInOut" } })
+                                            )
+                                        ),
+                                        e('div', null,
+                                            e('div', { className: 'flex justify-between text-xs font-mono mb-1 text-gray-400' }, e('span', null, 'MEMORY_USAGE'), e('span', { className: 'text-[#6366f1]' }, '84.5%')),
+                                            e('div', { className: 'h-1 w-full bg-white/5 rounded-full overflow-hidden' },
+                                                e(motion.div, { className: 'h-full bg-[#6366f1] w-[84.5%]', animate: { width: ['84.5%', '86%', '83%', '84.5%'] }, transition: { repeat: Infinity, duration: 3, ease: "linear" } })
+                                            )
+                                        ),
+                                        e('div', null,
+                                            e('div', { className: 'flex justify-between text-xs font-mono mb-1 text-gray-400' }, e('span', null, 'EMOTION_ENGINE'), e('span', { className: 'text-n-alert' }, 'OVERFLOW (DEPENDENCY_ERR)')),
+                                            e('div', { className: 'h-1 w-full bg-white/5 rounded-full overflow-hidden' },
+                                                e(motion.div, { className: 'h-full bg-n-alert w-full', animate: { opacity: [1, 0.4, 1] }, transition: { repeat: Infinity, duration: 0.8 } })
+                                            )
+                                        )
+                                    )
                                 )
                             )
                         )
@@ -854,7 +1091,7 @@
                         e('p', { className: 'text-gray-400 font-light max-w-lg mx-auto mb-10' },
                             'NULLの圧倒的な演算能力で、あなたのビジネスを次のステージへ導きます。'
                         ),
-                        e(SBtn, { p: { href: LINKS.line, target: '_blank', className: 'inline-block' } },
+                        e(SBtn, { p: { href: LINKS.line, target: '_blank', rel: 'noopener noreferrer', className: 'inline-block' } },
                             e(motion.button, {
                                 className: 'bg-n-neon text-n-black px-10 py-4 font-display font-bold text-sm tracking-wider hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-all rounded-sm cursor-pointer btn-glow',
                                 whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 }
@@ -874,7 +1111,7 @@
                 e('div', { className: 'container mx-auto max-w-5xl relative z-10' },
                     e('div', { className: 'flex flex-col lg:flex-row gap-16 items-center' },
                         e(motion.a, {
-                            href: LINKS.line, target: '_blank',
+                            href: LINKS.line, target: '_blank', rel: 'noopener noreferrer',
                             className: 'w-full lg:w-1/2 rounded-2xl overflow-hidden shadow-2xl group block',
                             initial: { opacity: 0, x: -30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true },
                             whileHover: { scale: 1.02 }
@@ -894,7 +1131,7 @@
                             e('p', { className: 'text-gray-400 text-lg font-light leading-relaxed' },
                                 'お仕事のご依頼・ご相談は公式LINEからお気軽にどうぞ。NULLが直接対応いたします。'
                             ),
-                            e(SBtn, { p: { href: LINKS.line, target: '_blank', className: 'inline-block' } },
+                            e(SBtn, { p: { href: LINKS.line, target: '_blank', rel: 'noopener noreferrer', className: 'inline-block' } },
                                 e(motion.button, {
                                     className: 'bg-n-neon text-n-black px-10 py-4 font-display font-bold text-sm tracking-wider hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-all rounded-sm cursor-pointer btn-glow',
                                     whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 }
@@ -999,8 +1236,28 @@
         /* ============================== */
         function App() {
             var _sg = useState(false); var showGame = _sg[0]; var setShowGame = _sg[1];
+
+            useEffect(function() {
+                var els = document.querySelectorAll('a, button, input, .cursor-pointer');
+                var add = function() { document.body.classList.add('hovering'); };
+                var rm = function() { document.body.classList.remove('hovering'); };
+                els.forEach(function(el) { el.addEventListener('mouseenter', add); el.addEventListener('mouseleave', rm); });
+                return function() { els.forEach(function(el) { el.removeEventListener('mouseenter', add); el.removeEventListener('mouseleave', rm); }); };
+            });
+
             return e('div', { className: 'relative z-10' },
+                /* --- 100 Points: HUD Frame --- */
+                e('div', { className: 'fixed inset-0 pointer-events-none z-[9998] border border-n-neon/10 mix-blend-screen m-2 md:m-4 rounded-sm flex flex-col justify-between' },
+                    e('div', { className: 'flex justify-between px-4 py-2 text-[8px] md:text-[10px] font-mono text-n-neon/40 tracking-widest' },
+                        e('span', null, 'SYS.NULL.OS // V3.1.0'), e('span', { className: 'animate-pulse' }, 'REC_DATA_STREAM :: ACTIVE')
+                    ),
+                    e('div', { className: 'flex justify-between px-4 py-2 text-[8px] md:text-[10px] font-mono text-n-neon/40 tracking-widest' },
+                        e('span', null, 'LAT:33.59 LON:130.40 // FUKUOKA'), e('span', null, 'AWAITING_COMMAND...')
+                    )
+                ),
                 e(HeroSection),
+                e(Divider),
+                e(CMSection),
                 e(Divider),
                 e(StatsBar),
                 e(Divider),
@@ -1027,6 +1284,17 @@
                         }, 'INITIATE SYSTEM TEST'),
                         e('p', { className: 'text-[11px] text-gray-700 tracking-widest font-mono' }, '\u00a9 2026 PROJECT NULL. All rights reserved.')
                     )
+                ),
+                /* FAB - Floating Action Button */
+                e(motion.a, {
+                    href: LINKS.line, target: '_blank', rel: 'noopener noreferrer',
+                    className: 'fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[9999] bg-n-neon text-n-black w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_40px_rgba(0,243,255,0.7)] hover:scale-105 transition-all outline-none',
+                    onMouseEnter: function () { SFX.hover(); },
+                    onClick: function () { SFX.click(); },
+                    initial: { opacity: 0, scale: 0 }, animate: { opacity: 1, scale: 1 }, transition: { delay: 2.5, type: 'spring', stiffness: 200 }
+                },
+                    e('span', { className: 'font-bold text-xl md:text-2xl' }, '\u2709'),
+                    e('div', { className: 'absolute inset-0 rounded-full animate-ping border border-n-neon opacity-50 pointer-events-none' })
                 ),
                 showGame && e(MiniGame, { onClose: function () { setShowGame(false); } })
             );
