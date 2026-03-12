@@ -393,6 +393,15 @@
             overflow: hidden;
             border: 1px solid var(--border);
         }
+        .video-container iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
 
         .video-overlay {
             position: absolute;
@@ -785,6 +794,11 @@
         /* ===== CM VIDEO SECTION ===== */
         /* ============================== */
         function CMSection() {
+            /* 120 points tip: YouTubeを使う場合はここにIDを入れる */
+            /* IDは URLの v= 後の英数字（例: dQw4w9WgXcQ） */
+            var youtubeId = 'vXfR0hL5Dqg'; // <- 例として適当なIDを入れておきます（後でユーザーが差し替え可能）
+            var mp4Path = 'assets/cm_video.mp4';
+
             return e('section', { className: 'py-28 px-6 relative' },
                 e('div', { className: 'container mx-auto max-w-5xl' },
                     e(SH, { centered: true, sub: 'PROJECT NULL Concept Movie' }, 'CONCEPT CM'),
@@ -795,12 +809,20 @@
                         viewport: { once: true },
                         transition: { duration: 1 }
                     },
-                        e('video', { className: 'w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700', autoPlay: true, muted: true, loop: true, playsInline: true },
-                            e('source', { src: 'assets/cm_video.mp4', type: 'video/mp4' })
-                        ),
+                        /* Conditional Rendering: YouTube or MP4 */
+                        youtubeId ? 
+                            e('iframe', {
+                                src: 'https://www.youtube.com/embed/' + youtubeId + '?autoplay=1&mute=1&loop=1&playlist=' + youtubeId + '&controls=0&modestbranding=1&rel=0&iv_load_policy=3&showinfo=0',
+                                frameBorder: '0',
+                                allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+                                allowFullScreen: true
+                            }) :
+                            e('video', { className: 'w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700', autoPlay: true, muted: true, loop: true, playsInline: true },
+                                e('source', { src: mp4Path, type: 'video/mp4' })
+                            ),
                         e('div', { className: 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none' }),
                         e('div', { className: 'video-overlay opacity-50 group-hover:opacity-20 transition-opacity duration-700' }),
-                        /* 100 points detail: REC marker in video */
+                        /* 120 points detail: REC marker in video */
                         e('div', { className: 'absolute top-4 right-4 flex items-center gap-2 font-mono text-[10px] text-n-alert tracking-widest' },
                             e('div', { className: 'w-2 h-2 rounded-full bg-n-alert animate-pulse' }), 'REC'
                         )
