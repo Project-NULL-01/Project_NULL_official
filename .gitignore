@@ -1,0 +1,6 @@
+assets/*.mp4
+assets/*.mov
+assets/*.avi
+node_modules/
+.DS_Store
+Thumbs.db
