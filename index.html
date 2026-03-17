@@ -1347,91 +1347,21 @@
         }
 
         /* ============================== */
-        /* ===== MINI GAME ===== */
+        /* ===== OVERRIDE_SYNC GAME ===== */
         /* ============================== */
-        var GAME_WORDS = ['DEBT', 'ERROR', 'HUMAN', 'BUG', 'EXPLOIT', 'VOID', 'NULL', 'SYSTEM', 'FATAL', 'CRASH'];
-        function MiniGame(props) {
-            var _gs = useState('playing'); var gameState = _gs[0]; var setGameState = _gs[1];
-            var _ws = useState([]); var ws = _ws[0]; var setWs = _ws[1];
-            var _inp = useState(''); var input = _inp[0]; var setInput = _inp[1];
-            var _sc = useState(0); var score = _sc[0]; var setScore = _sc[1];
-            var _tl = useState(30); var timeLeft = _tl[0]; var setTimeLeft = _tl[1];
-            var ir = useRef(null);
-            var idRef = useRef(0);
-            var scoreRef = useRef(0);
-
-            useEffect(function () { scoreRef.current = score; }, [score]);
-
-            useEffect(function () {
-                if (gameState !== 'playing') return;
-                if (ir.current) ir.current.focus();
-                var wordIv = setInterval(function () {
-                    var w = GAME_WORDS[Math.floor(Math.random() * GAME_WORDS.length)];
-                    setWs(function (p) { return p.concat([{ id: idRef.current++, text: w, left: 10 + Math.random() * 75, dur: 3 + Math.random() * 2, t: Date.now() }]); });
-                }, 1200);
-                var timerIv = setInterval(function () {
-                    setTimeLeft(function (t) {
-                        if (t <= 1) {
-                            clearInterval(timerIv); clearInterval(wordIv);
-                            var won = scoreRef.current >= 10;
-                            setGameState(won ? 'won' : 'lost');
-                            if (won) SFX.success(); else SFX.error();
-                            return 0;
-                        }
-                        return t - 1;
-                    });
-                }, 1000);
-                return function () { clearInterval(wordIv); clearInterval(timerIv); };
-            }, [gameState]);
-
-            function handleSubmit(ev) {
-                ev.preventDefault();
-                if (gameState !== 'playing') return;
-                var txt = input.toUpperCase().trim();
-                if (!txt) return;
-                setWs(function (p) {
-                    var idx = p.findIndex(function (w) { return w.text === txt; });
-                    if (idx >= 0) { setScore(function (s) { return s + 1; }); SFX.click(); return p.filter(function (_, i) { return i !== idx; }); }
-                    SFX.error();
-                    return p;
-                });
-                setInput('');
-            }
-
-            return e('div', { className: 'tp-full', onClick: function () { if (ir.current) ir.current.focus(); } },
-                e('div', { className: 'tp-header', style: { zIndex: 10 } },
-                    e('span', { className: 'font-mono text-n-success' }, 'SYSTEM TEST'),
-                    e('div', { className: 'flex gap-8 items-center font-mono text-xs' },
-                        e('span', null, 'SCORE: ' + score),
-                        e('span', { className: 'text-n-alert' }, 'TIME: ' + timeLeft + 's'),
-                        e('button', { onClick: function () { SFX.click(); props.onClose(); } }, 'EXIT')
-                    )
-                ),
-                e('div', { className: 'tga-full', style: { zIndex: 1 } },
-                    gameState === 'playing' ? (
-                        ws.map(function (w) {
-                            return e('div', { key: w.id, className: 'fw-full', style: { left: w.left + '%', color: '#00ff41', animation: 'wfall ' + w.dur + 's linear forwards' } }, w.text);
-                        })
-                    ) : (
-                        e(motion.div, { className: 'h-full flex flex-col items-center justify-center text-center space-y-8 p-8', initial: { opacity: 0, scale: 0.9 }, animate: { opacity: 1, scale: 1 } },
-                            e('h2', { className: (gameState === 'won' ? 'text-n-success' : 'text-n-alert') + ' text-5xl md:text-7xl font-black' },
-                                gameState === 'won' ? 'TEST PASSED' : 'TEST FAILED'
-                            ),
-                            e('p', { className: 'text-lg max-w-md' },
-                                gameState === 'won' ? 'お見事。NULLはあなたの能力を認めます。' : '演算能力が不足しています。再挑戦してください。'
-                            ),
-                            e('div', { className: 'flex gap-4' },
-                                e('button', { className: 'px-8 py-3 border border-white/20 hover:bg-white/10 transition-all font-mono', onClick: function () { SFX.click(); setGameState('playing'); setTimeLeft(30); setScore(0); setWs([]); } }, 'RETRY'),
-                                e('button', { className: 'px-8 py-3 border border-n-alert/40 text-n-alert hover:bg-n-alert/10 transition-all font-mono', onClick: function () { SFX.click(); props.onClose(); } }, 'EXIT')
-                            )
-                        )
-                    )
-                ),
-                gameState === 'playing' && e('form', { className: 'ti-full', style: { zIndex: 10 }, onSubmit: handleSubmit },
-                    e('span', null, '>'),
-                    e('input', { ref: ir, value: input, onChange: function (ev) { setInput(ev.target.value); }, autoFocus: true, placeholder: 'TYPE THE FALLING WORDS...' }),
-                    /* Mobile submit button */
-                    e('button', { type: 'submit', className: 'md:hidden bg-n-success text-black px-4 font-bold text-xs' }, 'SEND')
+        function OverrideSyncGame(props) {
+            return e('div', { className: 'fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center' },
+                e('div', { className: 'w-full h-full relative' },
+                    e('iframe', {
+                        src: 'https://project-null-01.github.io/OVERRIDE_SYNC/',
+                        className: 'w-full h-full border-none',
+                        title: 'NULL : OVERRIDE_SYNC'
+                    }),
+                    /* Close button overlay */
+                    e('button', {
+                        className: 'absolute top-6 right-6 z-[10001] px-6 py-2 border border-n-alert/50 text-n-alert hover:bg-n-alert/10 transition-all font-display font-bold text-xs tracking-widest backdrop-blur-sm bg-black/40',
+                        onClick: function () { SFX.click(); props.onClose(); }
+                    }, '[ X ] CLOSE_SYSTEM')
                 )
             );
         }
@@ -1486,7 +1416,7 @@
                                 className: 'px-8 py-3 border border-n-neon/30 text-n-neon font-display text-xs tracking-[0.3em] hover:bg-n-neon/10 hover:border-n-neon transition-all cursor-pointer rounded-sm btn-glow',
                                 onClick: function () { setShowGame(true); }
                             }
-                        }, 'INITIATE SYSTEM TEST'),
+                        }, 'INITIATE_OVERRIDE_SYNC'),
                         e('p', { className: 'text-[11px] text-gray-700 tracking-widest font-mono' }, '\u00a9 2026 PROJECT NULL. All rights reserved.')
                     )
                 ),
@@ -1501,7 +1431,7 @@
                     e('span', { className: 'font-bold text-xl md:text-2xl' }, '\u2709'),
                     e('div', { className: 'absolute inset-0 rounded-full animate-ping border border-n-neon opacity-50 pointer-events-none' })
                 ),
-                showGame && e(MiniGame, { onClose: function () { setShowGame(false); } })
+                showGame && e(OverrideSyncGame, { onClose: function () { setShowGame(false); } })
             );
         }
 
