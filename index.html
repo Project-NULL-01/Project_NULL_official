@@ -882,7 +882,7 @@
                         transition: { duration: 1.2, ease: "easeOut" } 
                     },
                         e('span', { className: 'inline-block text-[10px] md:text-xs font-mono tracking-[0.5em] text-n-neon border border-n-neon/30 px-6 py-2 bg-n-neon/5 backdrop-blur-sm mb-6' }, 'AI DEVELOPMENT STUDIO'),
-                        e('h1', { className: 'text-6xl md:text-9xl font-display font-black leading-tight tracking-tighter mb-6' },
+                        e('h1', { className: 'text-5xl md:text-9xl font-display font-black leading-tight tracking-tighter mb-6' },
                             'PROJECT ', e('span', { className: 'text-n-neon drop-shadow-[0_0_30px_var(--accent-glow)]' }, 'NULL')
                         ),
                         e('p', { className: 'text-sm md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed font-light' }, 
@@ -915,7 +915,7 @@
                     animate: { y: [0, 10, 0] }, 
                     transition: { repeat: Infinity, duration: 2.5, ease: "easeInOut" } 
                 },
-                    e('span', { className: 'font-mono text-[10px] tracking-[0.4em]' }, 'SCROLL'),
+                    e('span', { className: 'font-mono text-[10px] tracking-[0.4em] mr-[-0.4em]' }, 'SCROLL'),
                     e('div', { className: 'w-[1px] h-12 bg-gradient-to-b from-n-neon to-transparent shadow-[0_0_8px_var(--accent-glow)]' })
                 )
             );
@@ -1353,7 +1353,7 @@
             return e('div', { className: 'fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center' },
                 e('div', { className: 'w-full h-full relative' },
                     e('iframe', {
-                        src: 'https://project-null-01.github.io/OVERRIDE_SYNC/',
+                        src: 'https://project-null-01.github.io/OVERRIDE_SYNC/?v=' + Date.now(),
                         className: 'w-full h-full border-none',
                         title: 'NULL : OVERRIDE_SYNC'
                     }),
