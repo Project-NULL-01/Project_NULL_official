@@ -1,0 +1,17 @@
+{
+  "name": "project-null",
+  "version": "1.0.0",
+  "description": "Project NULL Official Website",
+  "scripts": {
+    "dev": "vite",
+    "build": "rm -rf dist && mkdir -p dist && cp -r assets dist/ 2>/dev/null || true && cp -r public dist/ 2>/dev/null || true && cp index.html dist/index.html && cp NullLandingPage.jsx dist/NullLandingPage.jsx 2>/dev/null || true && cp litlink.html dist/litlink.html 2>/dev/null || true && cp tailwind.config.js dist/tailwind.config.js 2>/dev/null || true",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}
