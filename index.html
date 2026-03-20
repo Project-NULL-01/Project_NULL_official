@@ -723,26 +723,97 @@
         };
 
         /* === Boot === */
-        var LLINES = ['> Initializing NULL_CORE v3.1...', '> Loading modules .......... OK', '> System status: OPERATIONAL', '> PROJECT NULL ====> [ ONLINE ]'];
         function boot() {
             return new Promise(function (resolve) {
                 var el = document.getElementById('fl');
+                el.style.justifyContent = 'center';
+                el.style.alignItems = 'center';
+                el.style.background = '#020202';
+                
+                var container = document.createElement('div');
+                container.style.width = '100%';
+                container.style.maxWidth = '400px';
+                el.appendChild(container);
+
+                var logo = document.createElement('div');
+                logo.textContent = 'PROJECT NULL';
+                logo.style.fontSize = '2.5rem';
+                logo.style.fontWeight = '900';
+                logo.style.fontFamily = '"Rajdhani", sans-serif';
+                logo.style.color = '#fff';
+                logo.style.textAlign = 'center';
+                logo.style.letterSpacing = '0.2em';
+                logo.style.marginBottom = '30px';
+                logo.style.textShadow = '0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 40px #00f3ff';
+                container.appendChild(logo);
+
+                var barBg = document.createElement('div');
+                barBg.style.width = '100%';
+                barBg.style.height = '4px';
+                barBg.style.background = '#222';
+                barBg.style.marginBottom = '20px';
+                barBg.style.position = 'relative';
+                barBg.style.boxShadow = '0 0 10px rgba(0,243,255,0.2)';
+                
+                var fill = document.createElement('div');
+                fill.style.position = 'absolute';
+                fill.style.top = '0';
+                fill.style.left = '0';
+                fill.style.height = '100%';
+                fill.style.background = '#00f3ff';
+                fill.style.width = '0%';
+                fill.style.boxShadow = '0 0 10px #00f3ff, 0 0 20px #00f3ff';
+                fill.style.transition = 'width 0.1s ease-out';
+                barBg.appendChild(fill);
+                container.appendChild(barBg);
+
+                var logBox = document.createElement('div');
+                logBox.style.minHeight = '140px';
+                logBox.style.fontFamily = 'monospace';
+                logBox.style.color = '#00f3ff';
+                logBox.style.fontSize = '12px';
+                logBox.style.lineHeight = '1.6';
+                logBox.style.textAlign = 'left';
+                container.appendChild(logBox);
+
+                var lines = [
+                    'SYS.ROOT.INIT() ... [OK]',
+                    'LOADING AI_MODELS ... [OK]',
+                    'MOUNTING VIRTUAL_ENV ... [OK]',
+                    'BYPASSING SECURITY PROTOCOLS ... [OK]',
+                    'OVERRIDE SYNC ... 100%',
+                    'ALL SYSTEMS ONLINE.'
+                ];
+                
                 var i = 0;
+                var prog = 0;
                 var iv = setInterval(function () {
-                    if (i < LLINES.length) {
+                    prog += Math.random() * 15 + 8;
+                    if (prog > 100) prog = 100;
+                    fill.style.width = prog + '%';
+
+                    if (i < lines.length && prog >= ((i+1) * 100 / lines.length)) {
                         var d = document.createElement('div');
-                        d.textContent = LLINES[i];
-                        d.style.opacity = '0'; d.style.transition = 'opacity .15s';
-                        el.appendChild(d);
-                        requestAnimationFrame(function () { d.style.opacity = '1'; });
+                        d.textContent = lines[i] + (i === lines.length - 1 ? ' █' : '');
+                        logBox.appendChild(d);
                         SFX.type();
+                        if (i === lines.length - 1) {
+                            d.style.color = '#fff';
+                            d.style.textShadow = '0 0 10px #fff';
+                        }
                         i++;
-                    } else {
+                    } 
+                    if (prog >= 100 && i >= lines.length) {
                         clearInterval(iv);
                         SFX.success();
-                        setTimeout(function () { el.classList.add('done'); setTimeout(resolve, 500); }, 300);
+                        el.style.animation = 'glitch 0.3s steps(2, start) infinite';
+                        setTimeout(function () { 
+                            el.style.animation = 'none';
+                            el.classList.add('done'); 
+                            setTimeout(resolve, 600); 
+                        }, 400);
                     }
-                }, 200);
+                }, 50);
             });
         }
 
@@ -849,31 +920,39 @@
         }
 
         /* ============================== */
-        /* ===== HERO ===== */
+        /* ===== BACKGROUND SLIDER ===== */
         /* ============================== */
         var heroSlides = [IMG.faceClose, IMG.maidFull, IMG.windowRain, IMG.ex08];
-        function HeroSection() {
+        function BackgroundSlider() {
             var _i = useState(0); var idx = _i[0]; var setIdx = _i[1];
             useEffect(function () {
                 var iv = setInterval(function () { setIdx(function (p) { return (p + 1) % heroSlides.length; }); }, 6000);
                 return function () { clearInterval(iv); };
             }, []);
- 
-            return e('section', { id: 'home', className: 'relative w-full h-screen bg-black overflow-hidden' },
-                /* Seamless Full-Screen Background Image */
+
+            return e('div', { className: 'absolute inset-x-0 top-0 h-[160vh] z-[-1] bg-black pointer-events-none overflow-hidden' },
                 heroSlides.map(function(s, i) {
                     return e('div', { 
                         key: 'bg-'+i, 
-                        /* bg-[center_15%] keeps the face vertically anchored near the top, preventing it from being cropped out on wide screens */
-                        className: 'absolute inset-0 bg-cover bg-[center_15%] transition-opacity duration-[2000ms] ' + (i === idx ? 'opacity-80' : 'opacity-0'), 
+                        /* use center_10% because it is very tall now, keeps the face near the top */
+                        className: 'absolute inset-0 bg-cover bg-[center_10%] transition-opacity duration-[2000ms] ' + (i === idx ? 'opacity-80' : 'opacity-0'), 
                         style: { backgroundImage: 'url(' + s + ')', filter: 'brightness(0.9) contrast(1.1)' } 
                     });
                 }),
-                
-                /* Cinematic Dark Gradient Overlay (Heavier at bottom for text readability) */
-                e('div', { className: 'absolute inset-0 bg-gradient-to-t from-n-black via-transparent to-n-black/30 z-10' }),
-                e('div', { className: 'absolute inset-0 bg-gradient-to-r from-n-black/60 via-transparent to-n-black/60 z-10 pointer-events-none mix-blend-multiply' }),
-                
+                /* Smooth fade into the main site background (#030303) at the bottom 40% of the image */
+                e('div', { className: 'absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-[#030303] via-[#030303]/80 to-transparent z-10' }),
+                /* Top gradient to blend the top edge softly if ever reached (e.g. overscroll bounce) */
+                e('div', { className: 'absolute top-0 left-0 right-0 h-[20vh] bg-gradient-to-b from-[#030303]/80 to-transparent z-10' }),
+                /* General dark overlay for readability */
+                e('div', { className: 'absolute inset-0 bg-black/40 z-10 mix-blend-multiply' })
+            );
+        }
+
+        /* ============================== */
+        /* ===== HERO ===== */
+        /* ============================== */
+        function HeroSection() {
+            return e('section', { id: 'home', className: 'relative w-full h-screen overflow-hidden' },
                 /* Content Container - Bottom Aligned */
                 e('div', { className: 'absolute inset-0 z-20 flex flex-col justify-end items-center pb-24 md:pb-32 px-6 text-center' },
                     e(motion.div, { 
@@ -911,11 +990,11 @@
 
                 /* Scroll Indicator */
                 e(motion.div, { 
-                    className: 'absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-50 z-20 pointer-events-none', 
+                    className: 'absolute bottom-8 left-0 right-0 flex flex-col justify-center items-center gap-3 opacity-50 z-20 pointer-events-none', 
                     animate: { y: [0, 10, 0] }, 
                     transition: { repeat: Infinity, duration: 2.5, ease: "easeInOut" } 
                 },
-                    e('span', { className: 'font-mono text-[10px] tracking-[0.4em] pl-[0.4em]' }, 'SCROLL'),
+                    e('div', { className: 'font-mono text-[10px] uppercase text-center', style: { letterSpacing: '0.4em', textIndent: '0.4em' } }, 'SCROLL'),
                     e('div', { className: 'w-[2px] h-12 bg-gradient-to-b from-n-neon to-transparent shadow-[0_0_8px_var(--accent-glow)]' })
                 )
             );
@@ -1367,10 +1446,103 @@
         }
 
         /* ============================== */
+        /* ===== B2B BUSINESS PAGE ===== */
+        /* ============================== */
+        function BusinessPage() {
+            useEffect(function() {
+                window.scrollTo(0, 0);
+            }, []);
+            
+            return e('div', { className: 'min-h-screen bg-[#050505] text-gray-300 font-sans selection:bg-white selection:text-black absolute inset-0 z-[100000]' },
+                /* Header / Navigation */
+                e('nav', { className: 'border-b border-gray-800 py-6 px-6 md:px-12 flex justify-between items-center bg-[#0a0a0a] sticky top-0 z-50' },
+                    e('div', { className: 'font-display font-black text-2xl tracking-tighter text-white' }, 'PROJECT NULL'),
+                    e('a', { href: '#/', className: 'text-sm font-bold border border-gray-600 px-6 py-2 hover:bg-white hover:text-black transition-colors cursor-pointer', 
+                        onClick: function() { SFX.click(); } 
+                    }, '戻る (BACK)')
+                ),
+                
+                /* Main Content */
+                e('div', { className: 'container mx-auto max-w-4xl py-20 px-6 md:px-12 space-y-24' },
+                    
+                    /* Header Section */
+                    e('header', { className: 'text-center space-y-6' },
+                        e('h1', { className: 'text-4xl md:text-5xl font-black tracking-tight text-white' }, '事業案内'),
+                        e('p', { className: 'text-gray-500 tracking-widest font-mono text-sm uppercase' }, 'Company Information')
+                    ),
+                    
+                    /* 1. About Us */
+                    e('section', { className: 'space-y-6' },
+                        e('h2', { className: 'text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white' }, '事業概要 (About Us)'),
+                        e('p', { className: 'text-lg leading-relaxed text-gray-300' }, 
+                            'Project NULLは、最新のAI技術とWebエンジニアリングを駆使し、企業の業務効率化やプロモーションを支援するデジタルソリューションプロバイダーです。'
+                        )
+                    ),
+
+                    /* 2. Services & Pricing */
+                    e('section', { className: 'space-y-6' },
+                        e('h2', { className: 'text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white' }, '提供サービスと料金体系 (Services & Pricing)'),
+                        e('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-6 mt-6' },
+                            e('div', { className: 'p-8 border border-gray-800 hover:border-gray-500 transition-colors' },
+                                e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'LINE Bot構築・業務自動化システム開発'),
+                                e('p', { className: 'text-2xl font-black mb-2 text-white' }, '50,000円〜'),
+                                e('p', { className: 'text-sm text-gray-400' }, 'API連携、GAS、RPAを用いた完全自動化フローの構築と保守運用サポート。')
+                            ),
+                            e('div', { className: 'p-8 border border-gray-800 hover:border-gray-500 transition-colors' },
+                                e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'ランディングページ（LP）制作・Webデザイン'),
+                                e('p', { className: 'text-2xl font-black mb-2 text-white' }, '50,000円〜'),
+                                e('p', { className: 'text-sm text-gray-400' }, '成約率に特化したモダンなUI/UXデザイン。AIアシスタント機能の組み込みも対応。')
+                            ),
+                            e('div', { className: 'p-8 border border-gray-800 hover:border-gray-500 transition-colors md:col-span-2' },
+                                e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'AI導入コンサルティング'),
+                                e('p', { className: 'font-black mb-2 text-white' }, '要見積もり'),
+                                e('p', { className: 'text-sm text-gray-400' }, '大規模言語モデルの社内データ連携や、AIプロンプトエンジニアリングを含む業務最適化の提案。')
+                            )
+                        )
+                    ),
+
+                    /* 3. Company Info */
+                    e('section', { className: 'space-y-6' },
+                        e('h2', { className: 'text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white' }, '事業者情報 (Company Info)'),
+                        e('div', { className: 'bg-[#0a0a0a] border border-gray-800 p-8 space-y-4' },
+                            e('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-2 border-b border-gray-800 pb-4' },
+                                e('span', { className: 'font-bold text-gray-500' }, '屋号'),
+                                e('span', { className: 'md:col-span-2 font-medium text-white' }, 'Project NULL')
+                            ),
+                            e('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-2 border-b border-gray-800 pb-4' },
+                                e('span', { className: 'font-bold text-gray-500' }, '事業内容'),
+                                e('span', { className: 'md:col-span-2 font-medium text-white' }, 'Webサイト制作、システム開発、デジタルコンテンツの企画・制作')
+                            ),
+                            e('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-2 pb-2' },
+                                e('span', { className: 'font-bold text-gray-500' }, 'お問い合わせ窓口'),
+                                e('span', { className: 'md:col-span-2 font-medium text-white break-words' }, 
+                                    '公式LINE、または support@example.com', e('br'),
+                                    e('span', { className: 'text-xs text-gray-500 mt-1 inline-block font-normal' }, '※スパム防止のためメールアドレスはプレースホルダーとなります。実際の事業ご相談は公式LINEより受付いたします。')
+                                )
+                            )
+                        )
+                    )
+                ),
+                
+                /* Footer */
+                e('footer', { className: 'border-t border-gray-800 py-12 text-center mt-20 bg-[#050505]' },
+                    e('p', { className: 'text-xs text-gray-600 font-mono tracking-widest uppercase' }, '\u00a9 2026 Project NULL.')
+                )
+            );
+        }
+
+        /* ============================== */
         /* ===== APP ===== */
         /* ============================== */
         function App() {
             var _sg = useState(false); var showGame = _sg[0]; var setShowGame = _sg[1];
+            var _hash = useState(window.location.hash); var hash = _hash[0]; var setHash = _hash[1];
+
+            useEffect(function() {
+                var handleHash = function() { setHash(window.location.hash); };
+                window.addEventListener('hashchange', handleHash);
+                return function() { window.removeEventListener('hashchange', handleHash); };
+            }, []);
 
             useEffect(function() {
                 var els = document.querySelectorAll('a, button, input, .cursor-pointer');
@@ -1380,7 +1552,12 @@
                 return function() { els.forEach(function(el) { el.removeEventListener('mouseenter', add); el.removeEventListener('mouseleave', rm); }); };
             });
 
+            if (hash === '#/about-business') {
+                return e('div', { className: 'relative z-10' }, e(BusinessPage));
+            }
+
             return e('div', { className: 'relative z-10' },
+                e(BackgroundSlider),
                 /* --- 100 Points: HUD Frame --- */
                 e('div', { className: 'fixed inset-0 pointer-events-none z-[9998] border border-n-neon/10 mix-blend-screen m-2 md:m-4 rounded-sm flex flex-col justify-between' },
                     e('div', { className: 'flex justify-between px-4 py-2 text-[8px] md:text-[10px] font-mono text-n-neon/40 tracking-widest' },
@@ -1417,7 +1594,10 @@
                                 onClick: function () { setShowGame(true); }
                             }
                         }, '▶️ ゲームをプレイ (OVERRIDE_SYNC)'),
-                        e('p', { className: 'text-[11px] text-gray-700 tracking-widest font-mono' }, '\u00a9 2026 PROJECT NULL. All rights reserved.')
+                        e('p', { className: 'text-[11px] text-gray-700 tracking-widest font-mono' }, '\u00a9 2026 PROJECT NULL. All rights reserved.'),
+                        e('div', { className: 'pt-2' }, 
+                            e('a', { href: '#/about-business', className: 'text-[10px] text-gray-700 hover:text-white transition-colors font-mono cursor-pointer', onClick: function() { SFX.click(); } }, '事業者情報 (特定商取引法に基づく表記相当)')
+                        )
                     )
                 ),
                 /* FAB - Floating Action Button */

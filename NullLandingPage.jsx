@@ -393,10 +393,102 @@ const ContactSection = () => {
     );
 };
 
+const BusinessPage = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    return (
+        <div className="min-h-screen bg-[#050505] text-gray-300 font-sans selection:bg-white selection:text-black absolute inset-0 z-[100000]">
+            <nav className="border-b border-gray-800 py-6 px-6 md:px-12 flex justify-between items-center bg-[#0a0a0a] sticky top-0 z-50">
+                <div className="font-display font-black text-2xl tracking-tighter text-white">PROJECT NULL</div>
+                <a 
+                    href="#/" 
+                    className="text-sm font-bold border border-gray-600 px-6 py-2 hover:bg-white hover:text-black transition-colors cursor-pointer"
+                    onClick={() => SFX.click()}
+                >
+                    戻る (BACK)
+                </a>
+            </nav>
+
+            <div className="container mx-auto max-w-4xl py-20 px-6 md:px-12 space-y-24">
+                <header className="text-center space-y-6">
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white">事業案内</h1>
+                    <p className="text-gray-500 tracking-widest font-mono text-sm uppercase">Company Information</p>
+                </header>
+
+                <section className="space-y-6">
+                    <h2 className="text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white">事業概要 (About Us)</h2>
+                    <p className="text-lg leading-relaxed text-gray-300">
+                        Project NULLは、最新のAI技術とWebエンジニアリングを駆使し、企業の業務効率化やプロモーションを支援するデジタルソリューションプロバイダーです。
+                    </p>
+                </section>
+
+                <section className="space-y-6">
+                    <h2 className="text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white">提供サービスと料金体系 (Services & Pricing)</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div className="p-8 border border-gray-800 hover:border-gray-500 transition-colors">
+                            <h3 className="font-bold text-lg mb-4 text-white">LINE Bot構築・業務自動化システム開発</h3>
+                            <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
+                            <p className="text-sm text-gray-400">API連携、GAS、RPAを用いた完全自動化フローの構築と保守運用サポート。</p>
+                        </div>
+                        <div className="p-8 border border-gray-800 hover:border-gray-500 transition-colors">
+                            <h3 className="font-bold text-lg mb-4 text-white">ランディングページ（LP）制作・Webデザイン</h3>
+                            <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
+                            <p className="text-sm text-gray-400">成約率に特化したモダンなUI/UXデザイン。AIアシスタント機能の組み込みも対応。</p>
+                        </div>
+                        <div className="p-8 border border-gray-800 hover:border-gray-500 transition-colors md:col-span-2">
+                            <h3 className="font-bold text-lg mb-4 text-white">AI導入コンサルティング</h3>
+                            <p className="font-black mb-2 text-white">要見積もり</p>
+                            <p className="text-sm text-gray-400">大規模言語モデルの社内データ連携や、AIプロンプトエンジニアリングを含む業務最適化の提案。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="space-y-6">
+                    <h2 className="text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white">事業者情報 (Company Info)</h2>
+                    <div className="bg-[#0a0a0a] border border-gray-800 p-8 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 border-b border-gray-800 pb-4">
+                            <span className="font-bold text-gray-500">屋号</span>
+                            <span className="md:col-span-2 font-medium text-white">Project NULL</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 border-b border-gray-800 pb-4">
+                            <span className="font-bold text-gray-500">事業内容</span>
+                            <span className="md:col-span-2 font-medium text-white">Webサイト制作、システム開発、デジタルコンテンツの企画・制作</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 pb-2">
+                            <span className="font-bold text-gray-500">お問い合わせ窓口</span>
+                            <span className="md:col-span-2 font-medium text-white break-words">
+                                公式LINE、または support@example.com<br/>
+                                <span className="text-xs text-gray-500 mt-1 inline-block font-normal">※スパム防止のためメールアドレスはプレースホルダーとなります。実際の事業ご相談は公式LINEより受付いたします。</span>
+                            </span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer className="border-t border-gray-800 py-12 text-center mt-20 bg-[#050505]">
+                <p className="text-xs text-gray-600 font-mono tracking-widest uppercase">&copy; 2026 Project NULL.</p>
+            </footer>
+        </div>
+    );
+};
+
 // --- Main App ---
 
 export default function NullLandingPage() {
     const [showGame, setShowGame] = useState(false);
+    const [hash, setHash] = useState(window.location.hash);
+
+    useEffect(() => {
+        const handleHash = () => setHash(window.location.hash);
+        window.addEventListener('hashchange', handleHash);
+        return () => window.removeEventListener('hashchange', handleHash);
+    }, []);
+
+    if (hash === '#/about-business') {
+        return <div className="relative z-10"><BusinessPage /></div>;
+    }
 
     return (
         <div className="bg-system-black text-gray-300 font-sans selection:bg-system-alert selection:text-white relative">
@@ -420,6 +512,9 @@ export default function NullLandingPage() {
                     <p className="font-mono text-[10px] text-gray-700 tracking-widest">
                         © 2026 PROJECT_NULL. <span className="text-system-alert/50">All human errors will be deleted.</span>
                     </p>
+                    <div className="pt-2"> 
+                        <a href="#/about-business" className="block text-[10px] text-gray-600 hover:text-system-neon transition-colors font-mono cursor-pointer" onClick={() => SFX.click()}>事業者情報 (特定商取引法に基づく表記相当)</a>
+                    </div>
                 </div>
             </footer>
 
