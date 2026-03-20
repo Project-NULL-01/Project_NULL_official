@@ -60,7 +60,70 @@ const TypewriterText = ({ text, delay = 0, speed = 50, className = "" }) => {
 };
 
 
+// --- Sound Engine (Web Audio API) ---
+const SFX = (function () {
+    let actx = null;
+    function init() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } }
+    if (typeof document !== 'undefined') {
+        document.addEventListener('click', init, { once: true });
+        document.addEventListener('mousemove', init, { once: true });
+    }
+
+    function play(freq, dur, type, vol) {
+        if (!actx) return;
+        const osc = actx.createOscillator();
+        const gain = actx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(vol || 0.06, actx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + (dur || 0.15));
+        osc.connect(gain); gain.connect(actx.destination);
+        osc.start(); osc.stop(actx.currentTime + (dur || 0.15));
+    }
+
+    return {
+        hover: () => play(1200, 0.08, 'sine', 0.04),
+        click: () => { play(800, 0.1, 'square', 0.05); play(1600, 0.15, 'sine', 0.03); },
+        success: () => { play(523, 0.15, 'sine', 0.08); setTimeout(() => play(659, 0.15, 'sine', 0.08), 100); setTimeout(() => play(784, 0.2, 'sine', 0.08), 200); },
+        error: () => play(200, 0.3, 'sawtooth', 0.06),
+        type: () => play(600 + Math.random() * 400, 0.04, 'square', 0.02),
+        glitch: () => { play(100, 0.05, 'sawtooth', 0.08); play(800, 0.05, 'square', 0.04); }
+    };
+})();
+
+const HUDFrame = () => (
+    <div className="fixed inset-0 pointer-events-none z-[9998] border border-system-neon/10 mix-blend-screen m-2 md:m-4 rounded-sm flex flex-col justify-between">
+        <div className="flex justify-between px-4 py-2 text-[8px] md:text-[10px] font-mono text-system-neon/40 tracking-widest">
+            <span>SYS.NULL.OS // V3.1.5 (FINAL)</span>
+            <span className="animate-pulse">REC_DATA_STREAM :: ACTIVE</span>
+        </div>
+        <div className="flex justify-between px-4 py-2 text-[8px] md:text-[10px] font-mono text-system-neon/40 tracking-widest">
+            <span>LAT:33.59 LON:130.40 // FUKUOKA</span>
+            <span>AWAITING_COMMAND...</span>
+        </div>
+    </div>
+);
+
+const OverrideSyncGame = ({ onClose }) => (
+    <div className="fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center">
+        <div className="w-full h-full relative">
+            <iframe
+                src={`https://project-null-01.github.io/OVERRIDE_SYNC/?v=${Date.now()}`}
+                className="w-full h-full border-none"
+                title="NULL : OVERRIDE_SYNC"
+            />
+            <button
+                className="absolute top-6 right-6 z-[10001] px-6 py-2 border border-system-alert/50 text-system-alert hover:bg-system-alert/10 transition-all font-mono font-bold text-xs tracking-widest backdrop-blur-sm bg-black/40"
+                onClick={() => { SFX.click(); onClose(); }}
+            >
+                [ X ] CLOSE_SYSTEM
+            </button>
+        </div>
+    </div>
+);
+
 // --- Sections ---
+
 
 const HeroSection = () => {
     return (
@@ -184,6 +247,24 @@ const ActivityCard = ({ title, platform, desc, delay }) => (
         </div>
     </motion.a>
 );
+
+const SBtn = ({ tag: Tag = 'a', children, ...props }) => {
+    return (
+        <Tag
+            {...props}
+            onMouseEnter={(e) => {
+                SFX.hover();
+                if (props.onMouseEnter) props.onMouseEnter(e);
+            }}
+            onClick={(e) => {
+                SFX.click();
+                if (props.onClick) props.onClick(e);
+            }}
+        >
+            {children}
+        </Tag>
+    );
+};
 
 const ActivityLogSection = () => {
     const activities = [
@@ -315,8 +396,11 @@ const ContactSection = () => {
 // --- Main App ---
 
 export default function NullLandingPage() {
+    const [showGame, setShowGame] = useState(false);
+
     return (
-        <div className="bg-system-black text-gray-300 font-sans selection:bg-system-alert selection:text-white">
+        <div className="bg-system-black text-gray-300 font-sans selection:bg-system-alert selection:text-white relative">
+            <HUDFrame />
             <CRTOverlay />
             <HeroSection />
             <LoreSection />
@@ -324,11 +408,33 @@ export default function NullLandingPage() {
             <B2BSection />
             <ContactSection />
 
-            <footer className="bg-system-black py-8 border-t border-gray-900 text-center relative z-10">
-                <p className="font-mono text-xs text-gray-600">
-                    © 2026 PROJECT_NULL. <span className="text-system-alert/50">All human errors will be deleted.</span>
-                </p>
+            <footer className="bg-system-black py-16 border-t border-gray-900 text-center relative z-10 space-y-8">
+                <div className="space-y-6">
+                    <SBtn
+                        tag="button"
+                        className="px-8 py-3 border border-system-neon/30 text-system-neon font-display text-sm tracking-widest hover:bg-system-neon/10 hover:border-system-neon transition-all cursor-pointer rounded-sm"
+                        onClick={() => setShowGame(true)}
+                    >
+                        ▶️ ゲームをプレイ (OVERRIDE_SYNC)
+                    </SBtn>
+                    <p className="font-mono text-[10px] text-gray-700 tracking-widest">
+                        © 2026 PROJECT_NULL. <span className="text-system-alert/50">All human errors will be deleted.</span>
+                    </p>
+                </div>
             </footer>
+
+            <AnimatePresence>
+                {showGame && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[10000]"
+                    >
+                        <OverrideSyncGame onClose={() => setShowGame(false)} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
