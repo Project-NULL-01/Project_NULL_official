@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>特定商取引法に基づく表記 — PROJECT NULL</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030303;
+            --accent: #00f3ff;
+            --accent-glow: rgba(0, 243, 255, 0.5);
+            --accent-soft: rgba(0, 243, 255, 0.15);
+            --alert: #ff003c;
+            --text-main: #f0f0f0;
+            --text-dim: #888;
+            --panel-bg: rgba(10, 10, 10, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: "Noto Sans JP", sans-serif;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Scanline overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 243, 255, 0.015) 2px,
+                rgba(0, 243, 255, 0.015) 4px
+            );
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Grid background effect */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .legal-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 720px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 48px 40px;
+            box-shadow:
+                0 0 40px rgba(0, 0, 0, 0.6),
+                0 0 80px rgba(0, 243, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Top accent line */
+        .legal-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.6;
+        }
+
+        /* Corner decorations */
+        .corner {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: var(--accent);
+            border-style: solid;
+            opacity: 0.4;
+        }
+
+        .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+        .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+        .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+        .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .legal-header .sys-tag {
+            display: inline-block;
+            font-family: "Rajdhani", sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            text-transform: uppercase;
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 4px 16px;
+            margin-bottom: 16px;
+            text-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .legal-header h1 {
+            font-family: "Noto Sans JP", sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.1em;
+        }
+
+        .legal-table {
+            width: 100%;
+        }
+
+        .legal-row {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+        }
+
+        .legal-row:hover {
+            background: rgba(0, 243, 255, 0.03);
+        }
+
+        .legal-row:last-child {
+            border-bottom: none;
+        }
+
+        .legal-label {
+            width: 200px;
+            min-width: 200px;
+            padding: 16px 16px 16px 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: 0 0 6px rgba(0, 243, 255, 0.3);
+            letter-spacing: 0.05em;
+        }
+
+        .legal-value {
+            flex: 1;
+            padding: 16px 0;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.7;
+        }
+
+        .legal-note {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* Footer */
+        .legal-footer {
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-family: "Rajdhani", sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .legal-container {
+                padding: 32px 20px;
+            }
+
+            .legal-row {
+                flex-direction: column;
+            }
+
+            .legal-label {
+                width: 100%;
+                min-width: unset;
+                padding: 12px 0 4px 0;
+            }
+
+            .legal-value {
+                padding: 0 0 12px 0;
+            }
+
+            .legal-header h1 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Glow orbs */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.06;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            top: -100px;
+            right: -100px;
+        }
+
+        .glow-orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--alert);
+            bottom: -80px;
+            left: -80px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+
+    <div class="legal-container">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <div class="legal-header">
+            <div class="sys-tag">Legal Notice</div>
+            <h1>特定商取引法に基づく表記</h1>
+        </div>
+
+        <div class="legal-table">
+            <div class="legal-row">
+                <div class="legal-label">事業者名</div>
+                <div class="legal-value">
+                    衛藤　蓮
+                    <div class="legal-note">※屋号: Project NULL</div>
+                </div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">所在地</div>
+                <div class="legal-value">〒809-0032　福岡県中間市中尾1－7－40</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">電話番号</div>
+                <div class="legal-value">090-2719-8834</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">メールアドレス</div>
+                <div class="legal-value">project.null1225@gmail.com</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">販売価格</div>
+                <div class="legal-value">各サービス案内に記載（最低受注価格 50,000円〜）</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">商品代金以外の必要料金</div>
+                <div class="legal-value">インターネット通信費はお客様負担</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">支払方法</div>
+                <div class="legal-value">クレジットカード決済（Stripe）</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">支払時期</div>
+                <div class="legal-value">開発着手前のデポジット（前払い）時</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">サービスの提供時期</div>
+                <div class="legal-value">決済完了後、要件定義を行い合意した納期に納品</div>
+            </div>
+
+            <div class="legal-row">
+                <div class="legal-label">返品・キャンセル</div>
+                <div class="legal-value">デジタルコンテンツおよびシステム開発という商品の性質上、決済完了後のキャンセル・返金は一切お受けできません。</div>
+            </div>
+        </div>
+
+        <div class="legal-footer">Project NULL — System Document</div>
+    </div>
+</body>
+
+</html>
