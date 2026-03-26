@@ -427,15 +427,31 @@ const BusinessPage = () => {
                 <section className="space-y-6">
                     <h2 className="text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white">提供サービスと料金体系 (Services & Pricing)</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <div className="p-8 border border-gray-800 hover:border-gray-500 transition-colors">
-                            <h3 className="font-bold text-lg mb-4 text-white">LINE Bot構築・業務自動化システム開発</h3>
-                            <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
-                            <p className="text-sm text-gray-400">API連携、GAS、RPAを用いた完全自動化フローの構築と保守運用サポート。</p>
+                        <div className="p-8 border border-gray-800 hover:border-system-neon transition-all group flex flex-col justify-between">
+                            <div>
+                                <h3 className="font-bold text-lg mb-4 text-white">LINE Bot構築・業務自動化システム開発</h3>
+                                <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
+                                <p className="text-sm text-gray-400 mb-6">API連携、GAS、RPAを用いた完全自動化フローの構築と保守運用サポート。</p>
+                            </div>
+                            <button 
+                                className="w-full py-3 bg-transparent border border-system-neon/40 text-system-neon font-mono text-xs tracking-widest hover:bg-system-neon hover:text-black transition-all"
+                                onClick={() => handleCheckout("LINE Bot構築・業務自動化", 50000)}
+                            >
+                                [ 決済手続きへ進む ]
+                            </button>
                         </div>
-                        <div className="p-8 border border-gray-800 hover:border-gray-500 transition-colors">
-                            <h3 className="font-bold text-lg mb-4 text-white">ランディングページ（LP）制作・Webデザイン</h3>
-                            <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
-                            <p className="text-sm text-gray-400">成約率に特化したモダンなUI/UXデザイン。AIアシスタント機能の組み込みも対応。</p>
+                        <div className="p-8 border border-gray-800 hover:border-system-neon transition-all group flex flex-col justify-between">
+                            <div>
+                                <h3 className="font-bold text-lg mb-4 text-white">ランディングページ（LP）制作・Webデザイン</h3>
+                                <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
+                                <p className="text-sm text-gray-400 mb-6">成約率に特化したモダンなUI/UXデザイン。AIアシスタント機能の組み込みも対応。</p>
+                            </div>
+                            <button 
+                                className="w-full py-3 bg-transparent border border-system-neon/40 text-system-neon font-mono text-xs tracking-widest hover:bg-system-neon hover:text-black transition-all"
+                                onClick={() => handleCheckout("LP制作・Webデザイン", 50000)}
+                            >
+                                [ 決済手続きへ進む ]
+                            </button>
                         </div>
                         <div className="p-8 border border-gray-800 hover:border-gray-500 transition-colors md:col-span-2">
                             <h3 className="font-bold text-lg mb-4 text-white">AI導入コンサルティング</h3>
@@ -457,10 +473,8 @@ const BusinessPage = () => {
                             <span className="md:col-span-2 font-medium text-white">Webサイト制作、システム開発、デジタルコンテンツの企画・制作</span>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 pb-2">
-                            <span className="font-bold text-gray-500">お問い合わせ窓口</span>
                             <span className="md:col-span-2 font-medium text-white break-words">
-                                公式LINE、または support@example.com<br/>
-                                <span className="text-xs text-gray-500 mt-1 inline-block font-normal">※スパム防止のためメールアドレスはプレースホルダーとなります。実際の事業ご相談は公式LINEより受付いたします。</span>
+                                公式LINE、または project.null1225@gmail.com
                             </span>
                         </div>
                     </div>
@@ -479,6 +493,27 @@ const BusinessPage = () => {
 export default function NullLandingPage() {
     const [showGame, setShowGame] = useState(false);
     const [hash, setHash] = useState(window.location.hash);
+
+    const handleCheckout = async (productName, unitAmount) => {
+        try {
+            SFX.click();
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productName, unitAmount }),
+            });
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('Checkout error:', data);
+                SFX.error();
+            }
+        } catch (err) {
+            console.error('Fetch error:', err);
+            SFX.error();
+        }
+    };
 
     useEffect(() => {
         const handleHash = () => setHash(window.location.hash);

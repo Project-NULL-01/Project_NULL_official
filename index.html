@@ -1448,7 +1448,7 @@
         /* ============================== */
         /* ===== B2B BUSINESS PAGE ===== */
         /* ============================== */
-        function BusinessPage() {
+        function BusinessPage(props) {
             useEffect(function() {
                 window.scrollTo(0, 0);
             }, []);
@@ -1483,15 +1483,27 @@
                     e('section', { className: 'space-y-6' },
                         e('h2', { className: 'text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white' }, '提供サービスと料金体系 (Services & Pricing)'),
                         e('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-6 mt-6' },
-                            e('div', { className: 'p-8 border border-gray-800 hover:border-gray-500 transition-colors' },
-                                e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'LINE Bot構築・業務自動化システム開発'),
-                                e('p', { className: 'text-2xl font-black mb-2 text-white' }, '50,000円〜'),
-                                e('p', { className: 'text-sm text-gray-400' }, 'API連携、GAS、RPAを用いた完全自動化フローの構築と保守運用サポート。')
+                            e('div', { className: 'p-8 border border-gray-800 hover:border-n-neon transition-all group flex flex-col justify-between' },
+                                e('div', null,
+                                    e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'LINE Bot構築・業務自動化システム開発'),
+                                    e('p', { className: 'text-2xl font-black mb-2 text-white' }, '50,000円〜'),
+                                    e('p', { className: 'text-sm text-gray-400 mb-6' }, 'API連携、GAS、RPAを用いた完全自動化フローの構築と保守運用サポート。')
+                                ),
+                                e('button', {
+                                    className: 'w-full py-3 bg-transparent border border-n-neon/40 text-n-neon font-mono text-xs tracking-widest hover:bg-n-neon hover:text-black transition-all',
+                                    onClick: function() { props.onCheckout("LINE Bot構築・業務自動化", 50000); }
+                                }, '[ 決済手続きへ進む ]')
                             ),
-                            e('div', { className: 'p-8 border border-gray-800 hover:border-gray-500 transition-colors' },
-                                e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'ランディングページ（LP）制作・Webデザイン'),
-                                e('p', { className: 'text-2xl font-black mb-2 text-white' }, '50,000円〜'),
-                                e('p', { className: 'text-sm text-gray-400' }, '成約率に特化したモダンなUI/UXデザイン。AIアシスタント機能の組み込みも対応。')
+                            e('div', { className: 'p-8 border border-gray-800 hover:border-n-neon transition-all group flex flex-col justify-between' },
+                                e('div', null,
+                                    e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'ランディングページ（LP）制作・Webデザイン'),
+                                    e('p', { className: 'text-2xl font-black mb-2 text-white' }, '50,000円〜'),
+                                    e('p', { className: 'text-sm text-gray-400 mb-6' }, '成約率に特化したモダンなUI/UXデザイン。AIアシスタント機能の組み込みも対応。')
+                                ),
+                                e('button', {
+                                    className: 'w-full py-3 bg-transparent border border-n-neon/40 text-n-neon font-mono text-xs tracking-widest hover:bg-n-neon hover:text-black transition-all',
+                                    onClick: function() { props.onCheckout("LP制作・Webデザイン", 50000); }
+                                }, '[ 決済手続きへ進む ]')
                             ),
                             e('div', { className: 'p-8 border border-gray-800 hover:border-gray-500 transition-colors md:col-span-2' },
                                 e('h3', { className: 'font-bold text-lg mb-4 text-white' }, 'AI導入コンサルティング'),
@@ -1516,8 +1528,7 @@
                             e('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-2 pb-2' },
                                 e('span', { className: 'font-bold text-gray-500' }, 'お問い合わせ窓口'),
                                 e('span', { className: 'md:col-span-2 font-medium text-white break-words' }, 
-                                    '公式LINE、または support@example.com', e('br'),
-                                    e('span', { className: 'text-xs text-gray-500 mt-1 inline-block font-normal' }, '※スパム防止のためメールアドレスはプレースホルダーとなります。実際の事業ご相談は公式LINEより受付いたします。')
+                                    '公式LINE、または project.null1225@gmail.com'
                                 )
                             )
                         )
@@ -1544,6 +1555,21 @@
                 return function() { window.removeEventListener('hashchange', handleHash); };
             }, []);
 
+            var handleCheckout = function(productName, unitAmount) {
+                SFX.click();
+                fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productName: productName, unitAmount: unitAmount })
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.url) { window.location.href = data.url; }
+                    else { console.error('Checkout error:', data); SFX.error(); }
+                })
+                .catch(function(err) { console.error('Fetch error:', err); SFX.error(); });
+            };
+
             useEffect(function() {
                 var els = document.querySelectorAll('a, button, input, .cursor-pointer');
                 var add = function() { document.body.classList.add('hovering'); };
@@ -1553,7 +1579,7 @@
             });
 
             if (hash === '#/about-business') {
-                return e('div', { className: 'relative z-10' }, e(BusinessPage));
+                return e('div', { className: 'relative z-10' }, e(BusinessPage, { onCheckout: handleCheckout }));
             }
 
             return e('div', { className: 'relative z-10' },
