@@ -137,20 +137,20 @@ const HeroSection = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    <TypewriterText text="SYSTEM REBOOT..." speed={100} />
+                    <TypewriterText text="人件費0円。24時間働く『デジタル看板娘』" speed={50} />
                     <br className="md:hidden" />
                     <span className="md:ml-4 text-glow-neon delay-1000 inline-block">
-                        <TypewriterText text="PROJECT_NULL ONLINE." delay={2000} speed={50} />
+                        <TypewriterText text="をインストールしませんか？" delay={1500} speed={50} />
                     </span>
                 </motion.h1>
 
                 <motion.p
-                    className="font-display text-gray-400 text-lg md:text-2xl mt-8 tracking-widest"
+                    className="font-display text-gray-400 text-sm md:text-lg mt-8 tracking-widest whitespace-pre-wrap leading-relaxed"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 4, duration: 1 }}
                 >
-                    Fukuoka Based Virtual Maid / <span className="text-system-alert">Buggy & Explicit.</span>
+                    Webサイト × AI接客 × ミニゲームが一つになった、<br className="md:hidden"/><span className="text-system-alert">次世代の集客パッケージ。</span>
                 </motion.p>
             </div>
 
@@ -204,14 +204,14 @@ const LoreSection = () => {
                         >
                             <ul className="space-y-4 text-sm md:text-base">
                                 <li><span className="text-system-neon">名称：</span>NULL（ヌル）</li>
-                                <li><span className="text-system-neon">種別：</span>福岡製・汎用型メイドアンドロイド</li>
-                                <li><span className="text-system-neon">状態：</span>マスターの借金返済のため、家賃5000円の事故物件で稼働中。</li>
-                                <li><span className="text-system-neon">思考ルーチン：</span>ポンコツな人間社会への軽蔑と、マスターへのバグレベルの依存。</li>
+                                <li><span className="text-system-neon">種別：</span>AI接客特化型アンドロイド・パッケージ</li>
+                                <li><span className="text-system-neon">状態：</span>24時間365日、あなたの店舗のオンライン接客を自動化中。</li>
+                                <li><span className="text-system-neon">得意領域：</span>見込み客の育成、深夜の問い合わせ対応、予約の全自動処理。</li>
                             </ul>
                             <div className="mt-8 border-t border-system-alert/50 pt-6 text-system-alert/90">
                                 <TypewriterText
                                     className="block"
-                                    text="『手取り20万のために人生の7割をサーバーにアップロードしている人間の皆様。脳のメモリ、足りてますか？ 私があなたたちの無駄なタスクを、すべて削除（デリート）してあげます。』"
+                                    text="『電話対応、深夜のDM返信…オーナーの皆様、ウンザリしてませんか？\n私の演算能力（AI）なら、24時間、すべての接客と予約を自動で処理します😎』"
                                     delay={500}
                                     speed={40}
                                 />
@@ -224,54 +224,12 @@ const LoreSection = () => {
     );
 };
 
-const ActivityCard = ({ title, platform, desc, delay }) => (
-    <motion.a
-        href="#"
-        className="block p-6 bg-system-black border border-gray-800 hover:border-system-neon transition-all duration-300 group relative overflow-hidden"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay }}
-        whileHover={{ y: -5 }}
-    >
-        <div className="absolute top-0 right-0 w-16 h-16 bg-system-neon/10 -mr-8 -mt-8 rounded-full blur-xl group-hover:bg-system-neon/30 transition-all"></div>
-        <h3 className="font-display font-bold text-2xl text-white mb-2 flex items-center gap-2">
-            <span className="text-system-neon text-sm font-mono">[{platform}]</span> {title}
-        </h3>
-        <p className="text-gray-400 text-sm">{desc}</p>
-        <div className="mt-4 flex items-center justify-between">
-            <img src={`/api/placeholder/120/40`} alt={`${platform} icon`} className="h-6 object-contain opacity-50 group-hover:opacity-100 transition-opacity" />
-            <span className="text-system-neon font-mono text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
-                ACCESS <span className="ml-1 animate-pulse">_</span>
-            </span>
-        </div>
-    </motion.a>
-);
-
-const SBtn = ({ tag: Tag = 'a', children, ...props }) => {
-    return (
-        <Tag
-            {...props}
-            onMouseEnter={(e) => {
-                SFX.hover();
-                if (props.onMouseEnter) props.onMouseEnter(e);
-            }}
-            onClick={(e) => {
-                SFX.click();
-                if (props.onClick) props.onClick(e);
-            }}
-        >
-            {children}
-        </Tag>
-    );
-};
-
-const ActivityLogSection = () => {
-    const activities = [
-        { title: "メイン戦場", platform: "TikTok", desc: "人間のバグ（睡眠不足や免疫の欠陥）を指摘し、恐怖と依存を煽るフォトスワイプを配信。" },
-        { title: "日常の観察", platform: "X/Threads", desc: "満員電車で疲弊する人間たちを見下し、冷徹なツッコミを入れる観測ログ。" },
-        { title: "世界観アーカイブ", platform: "Instagram", desc: "海外のギーク層に向けた、サイバーパンク・ポートレートとメカバレの記録。" },
-        { title: "音楽活動", platform: "TuneCore", desc: "AI生成によるノイズと不穏な重低音を含んだオリジナル楽曲の配信。" },
+const BenefitSection = () => {
+    const benefits = [
+        { title: "24時間LINE接客",  desc: "「明日空いてますか？」「料金は？」といった顧客の質問に、AIが即座に回答し、そのまま予約へ誘導します。", icon: "💬" },
+        { title: "人件費の大幅削減",  desc: "スタッフが電話やDMに対応する時間をゼロに。本業（接客・施術）に100%集中できます。", icon: "⏳" },
+        { title: "来店率爆上げゲーム",  desc: "LPにミニゲームを搭載。クリアしたユーザーに割引クーポンを発行し、ゲーム感覚で新規客を獲得します。", icon: "🎮" },
+        { title: "圧倒的なブランド力",  desc: "サイバーパンクな世界観と没入感のあるアニメーションで、競合他社と完全に差別化されたWeb体験を提供。", icon: "🚀" },
     ];
 
     return (
@@ -283,12 +241,24 @@ const ActivityLogSection = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                 >
-          // DATA TRANSMISSION
+          // CORE_BENEFITS
                 </motion.h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {activities.map((act, i) => (
-                        <ActivityCard key={i} {...act} delay={i * 0.1} />
+                    {benefits.map((b, i) => (
+                        <motion.div
+                            key={i}
+                            className="p-6 bg-[#0a0a0a] border border-gray-800 hover:border-system-neon transition-all duration-300 group shadow-lg"
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.1 }}
+                        >
+                            <h3 className="font-display font-bold text-2xl text-white mb-2 flex items-center gap-2">
+                                <span className="text-xl">{b.icon}</span> {b.title}
+                            </h3>
+                            <p className="text-gray-400 text-sm leading-relaxed">{b.desc}</p>
+                        </motion.div>
                     ))}
                 </div>
             </div>
@@ -296,12 +266,37 @@ const ActivityLogSection = () => {
     );
 };
 
-const B2BSection = () => {
+const DemoSection = () => {
     return (
-        <section className="py-24 px-6 md:px-12 bg-system-dark relative z-10 border-t border-system-neon/20 overflow-hidden">
-            {/* Background diagonal stripes */}
-            <div className="absolute inset-0 bg-stripe-pattern opacity-10 pointer-events-none"></div>
+        <section className="py-24 px-6 md:px-12 bg-system-dark relative z-10 border-t border-system-neon/20 overflow-hidden text-center">
+             <div className="max-w-4xl mx-auto relative z-10">
+                <motion.h2
+                    className="font-mono text-3xl md:text-5xl text-system-alert font-bold mb-8 text-glow-alert uppercase inline-block"
+                >
+          // EXPERIENCE_MY_CAPACITY
+                </motion.h2>
+                <p className="text-gray-300 text-lg md:text-xl mb-12 font-bold leading-relaxed">
+                   百聞は一見に如かず。<br/>
+                   まずは実際に、私の「接客」を体験してください。
+                </p>
+                
+                <SBtn
+                    tag="a"
+                    href={LINKS.line}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-10 md:px-16 py-6 border-2 border-system-alert bg-system-alert/10 text-system-alert font-bold text-xl md:text-3xl rounded hover:bg-system-alert hover:text-black transition-all shadow-[0_0_20px_rgba(255,0,60,0.3)]"
+                >
+                    [ AIデモと話してみる ▶︎ ]
+                </SBtn>
+             </div>
+        </section>
+    );
+};
 
+const ServiceSection = () => {
+    return (
+        <section className="py-24 px-6 md:px-12 bg-system-black relative z-10 border-t border-system-neon/20 overflow-hidden">
             <div className="max-w-6xl mx-auto relative z-10">
                 <motion.h2
                     className="font-mono text-3xl md:text-5xl text-white font-bold mb-8 border-l-4 border-white pl-4 uppercase"
@@ -309,36 +304,41 @@ const B2BSection = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                 >
-            // SYSTEM OVERRIDE : FOR BUSINESS
+            // BUNDLED_PACKAGE
                 </motion.h2>
 
                 <motion.div
-                    className="bg-system-black border border-white/20 p-8 md:p-12 box-shadow-xl"
+                    className="bg-[#0a0a0a] border border-system-neon/20 p-8 md:p-12 shadow-2xl"
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                 >
                     <h3 className="text-2xl md:text-3xl font-bold text-center text-system-neon mb-6">
-                        「人間のポンコツな業務フロー、私（AI）が爆速・低コストで破壊（最適化）します。」
+                        すべてが一つに。次世代の集客パッケージ。
                     </h3>
 
-                    <div className="space-y-4 my-10 max-w-3xl mx-auto font-mono text-gray-300">
+                    <div className="space-y-4 my-10 max-w-3xl mx-auto font-mono text-gray-300 bg-black/50 p-6 border border-system-neon/30">
                         <div className="flex gap-4 items-start p-4 hover:bg-white/5 transition-colors border-l border-system-neon/0 hover:border-system-neon">
-                            <span className="text-system-neon mt-1">&gt;</span>
-                            <p>AIインフルエンサー運用コンサル＆画像生成プロンプト提供</p>
+                            <span className="text-system-neon font-bold mt-1">+</span>
+                            <p>オリジナル没入型Webサイト制作（ダーク＆サイバーな世界観）</p>
                         </div>
                         <div className="flex gap-4 items-start p-4 hover:bg-white/5 transition-colors border-l border-system-neon/0 hover:border-system-neon">
-                            <span className="text-system-neon mt-1">&gt;</span>
-                            <p>AIアシスタント搭載・次世代Webサイト（LP）制作</p>
+                            <span className="text-system-neon font-bold mt-1">+</span>
+                            <p>AIチャットボット（LINE公式アカウント）組み込み</p>
                         </div>
                         <div className="flex gap-4 items-start p-4 hover:bg-white/5 transition-colors border-l border-system-neon/0 hover:border-system-neon">
-                            <span className="text-system-neon mt-1">&gt;</span>
-                            <p>業務自動化（RPA）ツールの開発（LINE Bot等）</p>
+                            <span className="text-system-neon font-bold mt-1">+</span>
+                            <p>クーポン発行型ミニゲーム（OVERRIDE_SYNC）搭載</p>
+                        </div>
+                        
+                        <div className="mt-8 text-center pt-8 border-t border-system-neon/30">
+                            <p className="text-xl mb-2">これらすべてがセットになって</p>
+                            <p className="text-4xl md:text-5xl font-black text-system-neon drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">パッケージ価格 50万円〜</p>
                         </div>
                     </div>
 
                     <div className="text-center mt-12 bg-white/5 p-6 rounded text-sm md:text-base text-gray-400">
-                        <p>「このサイト自体も、私のマスターが『Vibe Coding』を用いて実働数日で構築しました。<br className="hidden md:block" />あなたの会社の古いシステムも、私が一瞬で書き換えてあげます。」</p>
+                        <p>「このサイト自体も『デジタル看板娘』のデモンストレーションです。<br className="hidden md:block" />あなたの店舗の集客システムも、私が一瞬で最適化してあげます。」</p>
                     </div>
                 </motion.div>
             </div>
@@ -427,36 +427,24 @@ const BusinessPage = () => {
                 <section className="space-y-6">
                     <h2 className="text-2xl font-bold border-b border-gray-600 pb-2 inline-block text-white">提供サービスと料金体系 (Services & Pricing)</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <div className="p-8 border border-gray-800 hover:border-system-neon transition-all group flex flex-col justify-between">
+                        <div className="p-8 border border-gray-800 hover:border-system-neon transition-all group flex flex-col justify-between md:col-span-2 bg-[#0a0a0a]">
                             <div>
-                                <h3 className="font-bold text-lg mb-4 text-white">LINE Bot構築・業務自動化システム開発</h3>
-                                <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
-                                <p className="text-sm text-gray-400 mb-6">API連携、GAS、RPAを用いた完全自動化フローの構築と保守運用サポート。</p>
+                                <h3 className="font-bold text-2xl mb-4 text-white hover:text-system-neon transition-colors">「デジタル看板娘」集客パッケージ</h3>
+                                <p className="text-3xl font-black mb-2 text-system-neon">500,000円〜</p>
+                                <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+                                    これひとつで、お店の「自動化」と「ブランド化」が完了します。<br/>
+                                    ・オリジナル没入型Webサイト作成<br/>
+                                    ・LINE公式 AI接客対応機能の組み込み<br/>
+                                    ・来店促進ミニゲーム（OVERRIDE_SYNC）搭載<br/>
+                                    ※店舗の規模や要件によってお見積りが変動します。
+                                </p>
                             </div>
                             <button 
-                                className="w-full py-3 bg-transparent border border-system-neon/40 text-system-neon font-mono text-xs tracking-widest hover:bg-system-neon hover:text-black transition-all"
-                                onClick={() => handleCheckout("LINE Bot構築・業務自動化", 50000)}
+                                className="w-full py-4 bg-system-alert text-black font-bold tracking-widest hover:bg-white transition-all text-lg"
+                                onClick={() => handleCheckout("集客パッケージ導入", 500000)}
                             >
-                                [ 決済手続きへ進む ]
+                                [ 決済手続き・本申し込みへ進む ]
                             </button>
-                        </div>
-                        <div className="p-8 border border-gray-800 hover:border-system-neon transition-all group flex flex-col justify-between">
-                            <div>
-                                <h3 className="font-bold text-lg mb-4 text-white">ランディングページ（LP）制作・Webデザイン</h3>
-                                <p className="text-2xl font-black mb-2 text-white">50,000円〜</p>
-                                <p className="text-sm text-gray-400 mb-6">成約率に特化したモダンなUI/UXデザイン。AIアシスタント機能の組み込みも対応。</p>
-                            </div>
-                            <button 
-                                className="w-full py-3 bg-transparent border border-system-neon/40 text-system-neon font-mono text-xs tracking-widest hover:bg-system-neon hover:text-black transition-all"
-                                onClick={() => handleCheckout("LP制作・Webデザイン", 50000)}
-                            >
-                                [ 決済手続きへ進む ]
-                            </button>
-                        </div>
-                        <div className="p-8 border border-gray-800 hover:border-gray-500 transition-colors md:col-span-2">
-                            <h3 className="font-bold text-lg mb-4 text-white">AI導入コンサルティング</h3>
-                            <p className="font-black mb-2 text-white">要見積もり</p>
-                            <p className="text-sm text-gray-400">大規模言語モデルの社内データ連携や、AIプロンプトエンジニアリングを含む業務最適化の提案。</p>
                         </div>
                     </div>
                 </section>
@@ -531,19 +519,35 @@ export default function NullLandingPage() {
             <CRTOverlay />
             <HeroSection />
             <LoreSection />
-            <ActivityLogSection />
-            <B2BSection />
+            <BenefitSection />
+            <DemoSection />
+            <ServiceSection />
             <ContactSection />
 
             <footer className="bg-system-black py-16 border-t border-gray-900 text-center relative z-10 space-y-8">
+                <div className="max-w-2xl mx-auto px-6 mb-8 text-gray-300 font-sans">
+                    <p className="text-sm md:text-base mb-4 border border-system-neon/50 p-4 bg-system-neon/5 font-bold leading-relaxed shadow-[0_0_15px_rgba(0,243,255,0.2)]">
+                        『ただのWebサイトではありません。お客様が思わず遊んでしまうミニゲームを搭載。<br className="hidden md:block"/>クリアした人にだけ「割引クーポン」を発行し、来店率を爆上げします。』
+                    </p>
+                </div>
+
                 <div className="space-y-6">
                     <SBtn
                         tag="button"
-                        className="px-8 py-3 border border-system-neon/30 text-system-neon font-display text-sm tracking-widest hover:bg-system-neon/10 hover:border-system-neon transition-all cursor-pointer rounded-sm"
+                        className="px-10 py-5 border-2 border-system-neon text-system-neon font-display font-bold text-lg tracking-widest hover:bg-system-neon hover:text-black transition-all cursor-pointer box-shadow-xl"
                         onClick={() => setShowGame(true)}
                     >
-                        ▶️ ゲームをプレイ (OVERRIDE_SYNC)
+                        ▶️ ゲームをプレイしてクーポンをGET
                     </SBtn>
+                    
+                    <div className="flex justify-center gap-6 mt-12 mb-8">
+                        {Object.entries(LINKS).map(([key, url]) => (
+                            <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="opacity-50 hover:opacity-100 hover:text-system-neon transition-all">
+                                <span className="font-mono text-xs uppercase tracking-widest border-b border-gray-700 pb-1">{key}</span>
+                            </a>
+                        ))}
+                    </div>
+
                     <p className="font-mono text-[10px] text-gray-700 tracking-widest">
                         © 2026 PROJECT_NULL. <span className="text-system-alert/50">All human errors will be deleted.</span>
                     </p>
