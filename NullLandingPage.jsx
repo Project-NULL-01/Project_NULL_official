@@ -333,7 +333,7 @@ const ServiceSection = () => {
                         
                         <div className="mt-8 text-center pt-8 border-t border-system-neon/30">
                             <p className="text-xl mb-2">これらすべてがセットになって</p>
-                            <p className="text-4xl md:text-5xl font-black text-system-neon drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">パッケージ価格 50万円〜</p>
+                            <p className="text-4xl md:text-5xl font-black text-system-neon drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">パッケージ価格 15万円〜</p>
                         </div>
                     </div>
 
@@ -430,7 +430,7 @@ const BusinessPage = () => {
                         <div className="p-8 border border-gray-800 hover:border-system-neon transition-all group flex flex-col justify-between md:col-span-2 bg-[#0a0a0a]">
                             <div>
                                 <h3 className="font-bold text-2xl mb-4 text-white hover:text-system-neon transition-colors">「デジタル看板娘」集客パッケージ</h3>
-                                <p className="text-3xl font-black mb-2 text-system-neon">500,000円〜</p>
+                                <p className="text-3xl font-black mb-2 text-system-neon">150,000円〜</p>
                                 <p className="text-sm text-gray-400 mb-6 leading-relaxed">
                                     これひとつで、お店の「自動化」と「ブランド化」が完了します。<br/>
                                     ・オリジナル没入型Webサイト作成<br/>
@@ -441,7 +441,7 @@ const BusinessPage = () => {
                             </div>
                             <button 
                                 className="w-full py-4 bg-system-alert text-black font-bold tracking-widest hover:bg-white transition-all text-lg"
-                                onClick={() => handleCheckout("集客パッケージ導入", 500000)}
+                                onClick={() => handleCheckout("集客パッケージ導入", 150000)}
                             >
                                 [ 決済手続き・本申し込みへ進む ]
                             </button>
