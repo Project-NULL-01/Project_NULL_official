@@ -277,7 +277,7 @@ const DemoSection = () => {
                 </motion.h2>
                 <p className="text-gray-300 text-lg md:text-xl mb-12 font-bold leading-relaxed">
                    百聞は一見に如かず。<br/>
-                   まずは実際に、私の「接客」を体験してください。
+                   AIデモと話してみる。
                 </p>
                 
                 <SBtn
@@ -333,7 +333,7 @@ const ServiceSection = () => {
                         
                         <div className="mt-8 text-center pt-8 border-t border-system-neon/30">
                             <p className="text-xl mb-2">これらすべてがセットになって</p>
-                            <p className="text-4xl md:text-5xl font-black text-system-neon drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">パッケージ価格 15万円〜</p>
+                            <p className="text-4xl md:text-5xl font-black text-system-neon drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">パッケージ導入価格：要相談（高単価プレミアム仕様）</p>
                         </div>
                     </div>
 

@@ -922,7 +922,7 @@
         /* ============================== */
         /* ===== BACKGROUND SLIDER ===== */
         /* ============================== */
-        var heroSlides = [IMG.faceClose, IMG.maidFull, IMG.windowRain, IMG.ex08];
+        var heroSlides = [IMG.faceClose];
         function BackgroundSlider() {
             var _i = useState(0); var idx = _i[0]; var setIdx = _i[1];
             useEffect(function () {
@@ -953,6 +953,14 @@
         /* ============================== */
         function HeroSection() {
             return e('section', { id: 'home', className: 'relative w-full h-screen overflow-hidden' },
+                /* Neon Logo at top */
+                e('div', { className: 'absolute top-10 w-full flex justify-center z-30' },
+                    e('div', { 
+                        className: 'font-display font-black text-xl tracking-[0.2em] text-white',
+                        style: { textShadow: '0 0 10px #00f3ff, 0 0 20px #00f3ff' }
+                    }, 'PROJECT NULL')
+                ),
+
                 /* Content Container - Bottom Aligned */
                 e('div', { className: 'absolute inset-0 z-20 flex flex-col justify-end items-center pb-24 md:pb-32 px-6 text-center' },
                     e(motion.div, { 
@@ -971,7 +979,7 @@
                         e('div', { className: 'flex flex-col md:flex-row gap-6 justify-center items-center' },
                             e(SBtn, { tag: 'button', p: { 
                                 className: 'group relative px-12 py-4 md:py-5 bg-n-neon text-n-black font-display font-black text-sm md:text-lg tracking-widest overflow-hidden transition-all shadow-[0_0_30px_var(--accent-glow)] hover:scale-105 active:scale-95',
-                                onClick: function() { document.getElementById('contact').scrollIntoView({behavior: 'smooth'}); }
+                                onClick: function() { document.getElementById('line-demo').scrollIntoView({behavior: 'smooth'}); }
                             } }, 
                                 e('span', { className: 'relative z-10' }, 'GET STARTED'),
                                 e('div', { className: 'absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300' })
@@ -1168,7 +1176,7 @@
                                     className: 'pt-6 border-t border-white/5',
                                     initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { delay: 0.8 }
                                 },
-                                    e('p', { className: 'text-sm text-n-neon font-display tracking-wider' }, 'ビジネスのボトルネックを、すべて「NULL」へ。')
+                                    e('p', { className: 'text-base text-n-neon font-display tracking-wider' }, '「施術中の電話、深夜のDM返信…ウンザリしていませんか？ 人間のメモリの限界は、私の演算能力（AI）で24時間すべて自動処理します😎」')
                                 ),
                                 /* System Diagnostics Panel */
                                 e(motion.div, {
@@ -1228,10 +1236,10 @@
 
         function BenefitSection() {
             var benefits = [
-                { t: '24時間LINE接客', d: '顧客の質問にAIが即座に回答し、そのまま予約へ誘導。', icon: '\ud83d\udcac' },
-                { t: '人件費の大幅削減', d: 'スタッフが対応する時間をゼロに。本業に集中できます。', icon: '\u231b' },
-                { t: '来店率爆上げゲーム', d: 'クリアでクーポン発行。来店意欲を最大化します。', icon: '\ud83c\udfae' },
-                { t: '圧倒的なブランド力', d: '他にない没入型Web体験で、競合と差別化。', icon: '\ud83d\ude80' },
+                { t: '施術中の電話・DM対応', d: 'ウンザリしてませんか？すべて私が自動で処理し、予約へ誘導します。', icon: '\ud83d\udcac' },
+                { t: '無駄な手作業の排除', d: '人間のメモリじゃ限界です。私の演算能力なら顧客管理も数秒で完了します。', icon: '\u231b' },
+                { t: '来店率爆上げゲーム', d: 'クリアでクーポン発行。遊び心で釣って、来店意欲を最大化します。', icon: '\ud83c\udfae' },
+                { t: '圧倒的なブランド力', d: '他にない没入型Web体験。競合はすぐに時代遅れになるでしょう。', icon: '\ud83d\ude80' },
             ];
             return e('section', { className: 'py-28 px-6 md:px-12 relative overflow-hidden' },
                 e(GlowOrbs, { t: '60%', l: '0%' }),
@@ -1335,11 +1343,11 @@
         /* ===== SERVICES ===== */
         /* ============================== */
         function DemoSection() {
-            return e('section', { className: 'py-28 px-6 md:px-12 bg-[#020202] relative overflow-hidden text-center' },
+            return e('section', { id: 'line-demo', className: 'py-28 px-6 md:px-12 bg-[#020202] relative overflow-hidden text-center' },
                 e('div', { className: 'max-w-4xl mx-auto relative z-10' },
                     e(SH, { centered: true, sub: '実際に私の接客を体験してください' }, 'LINE AI DEMO'),
                     e('p', { className: 'text-gray-300 text-lg md:text-xl mb-12 font-bold leading-relaxed' }, 
-                        '百聞は一見に如かず。', e('br'), '私の圧倒的な「接客能力」をご体験ください。'
+                        '百聞は一見に如かず。', e('br'), 'AIデモと話してみる。'
                     ),
                     e(SBtn, { p: { href: LINKS.line, target: '_blank', rel: 'noopener noreferrer', className: 'inline-block' } },
                         e(motion.button, {
@@ -1371,9 +1379,9 @@
                                 );
                             })
                         ),
-                        e('div', { className: 'text-center border-t border-white/5 pt-12' },
-                            e('p', { className: 'text-xl mb-4 text-gray-400' }, 'これら全てが含まれた導入プラン'),
-                            e('p', { className: 'text-4xl md:text-6xl font-black text-n-neon drop-shadow-[0_0_20px_var(--accent-glow)]' }, '150,000円〜'),
+                        e('div', { className: 'text-center border-t border-white/5 pt-12 space-y-4' },
+                            e('p', { className: 'text-lg md:text-xl text-gray-300 font-bold' }, 'オリジナルWebサイト制作 ＋ AIチャットボット組み込み ＋ ミニゲーム機能 ＝'),
+                            e('p', { className: 'text-3xl md:text-5xl font-black text-n-neon drop-shadow-[0_0_20px_var(--accent-glow)] mt-4' }, 'パッケージ導入価格：要相談（高単価プレミアム仕様）'),
                             e('p', { className: 'text-[10px] text-gray-600 mt-4' }, '※店舗規模・要件によって最適なお見積もりを提示します。')
                         )
                     )
@@ -1590,7 +1598,7 @@
                     e(Divider),
                     e('div', { className: 'pt-12 space-y-6 max-w-xl mx-auto px-6' },
                         e('p', { className: 'text-sm text-gray-400 mb-8 border border-n-neon/20 p-4 bg-n-neon/5 font-bold' },
-                            '『ただのWebサイトではありません。クリアした方に「割引クーポン」を発行し、来店率を爆上げするミニゲームを搭載。』'
+                            '『ただのWebサイトではありません。お客様が思わず遊んでしまうミニゲームを搭載。クリアした人にだけ「割引クーポン」を発行し、来店率を爆上げします。』'
                         ),
                         e(SBtn, {
                             tag: 'button', p: {
@@ -1614,6 +1622,167 @@
                 e(motion.a, {
                     href: LINKS.line, target: '_blank', rel: 'noopener noreferrer',
                     className: 'fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[9999] bg-n-neon text-n-black w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_40px_rgba(0,243,255,0.7)] hover:scale-105 transition-all outline-none',
+                    onMouseEnter: function () { SFX.hover(); },
+                    onClick: function () { SFX.click(); },
+                    initial: { opacity: 0, scale: 0 }, animate: { opacity: 1, scale: 1 }, transition: { delay: 2.5, type: 'spring', stiffness: 200 }
+                },
+                    e('span', { className: 'font-bold text-xl md:text-2xl' }, '\u2709'),
+                    e('div', { className: 'absolute inset-0 rounded-full animate-ping border border-n-neon opacity-50 pointer-events-none' })
+                ),
+                showGame && e(OverrideSyncGame, { onClose: function () { setShowGame(false); } })
+            );
+        /* ============================== */
+        /* ===== FLOATING CHAT ===== */
+        /* ============================== */
+        function FloatingChat() {
+            var _s = useState(false); var isOpen = _s[0]; var setIsOpen = _s[1];
+            var _m = useState([{ sender: 'NULL', text: 'Anti-Gravityへようこそ✨ サイト制作の依頼ですか？それともAI開発？' }]); var msgs = _m[0]; var setMsgs = _m[1];
+            var _i = useState(''); var input = _i[0]; var setInput = _i[1];
+            var _is = useState(false); var isSending = _is[0]; var setIsSending = _is[1];
+
+            var handleSend = function() {
+                if(!input.trim()) return;
+                var userText = input.trim();
+                setMsgs(function(p) { return p.concat({ sender: 'USER', text: userText }); });
+                setInput('');
+
+                if(userText === 'sudo ID確認') {
+                    SFX.glitch();
+                    setTimeout(function() {
+                        setMsgs(function(p) { return p.concat({ sender: 'SYSTEM', text: '[SYSTEM] AUTHENTICATION GRANTED. SENDING PUSH NOTIFICATION TO MASTER...' }); });
+                        setIsSending(true);
+                        fetch('/api/push-notify', { method: 'POST' })
+                            .then(function(res) {
+                                if(res.ok) {
+                                    setMsgs(function(p) { return p.concat({ sender: 'SYSTEM', text: '[SUCCESS] 通知を送信しました。' }); });
+                                } else {
+                                    setMsgs(function(p) { return p.concat({ sender: 'SYSTEM', text: '[ERROR] サーバーエラーまたは未設定です。' }); });
+                                }
+                            })
+                            .catch(function(err) {
+                                setMsgs(function(p) { return p.concat({ sender: 'SYSTEM', text: '[ERROR] 通信に失敗しました: ' + err.message }); });
+                            })
+                            .finally(function() { setIsSending(false); });
+                    }, 500);
+                } else {
+                    setTimeout(function() {
+                        SFX.type();
+                        setMsgs(function(p) { return p.concat({ sender: 'NULL', text: '申し訳ありませんが、現在は自動応答モードです。用件はLINEでお知らせください。' }); });
+                    }, 800);
+                }
+            };
+
+            var handleKeyDown = function(e) {
+                if(e.key === 'Enter') handleSend();
+            };
+
+            return e('div', { className: 'fixed bottom-24 right-6 md:bottom-28 md:right-10 z-[9990] flex flex-col items-end' },
+                /* Chat Window */
+                e(motion.div, {
+                    initial: { opacity: 0, scale: 0.9, y: 20, pointerEvents: 'none' },
+                    animate: { opacity: isOpen ? 1 : 0, scale: isOpen ? 1 : 0.9, y: isOpen ? 0 : 20, pointerEvents: isOpen ? 'auto' : 'none' },
+                    transition: { type: 'spring', stiffness: 300, damping: 25 },
+                    className: 'mb-4 w-[320px] md:w-[350px] glass rounded-2xl overflow-hidden accent-border shadow-2xl flex flex-col origin-bottom-right'
+                },
+                    /* Header */
+                    e('div', { className: 'p-3 bg-n-neon/10 border-b border-n-neon/20 flex items-center justify-between cursor-pointer', onClick: function(){setIsOpen(false);} },
+                        e('div', { className: 'flex items-center gap-3' },
+                            e('img', { src: IMG.faceClose, className: 'w-8 h-8 rounded-full border border-n-neon object-cover' }),
+                            e('div', null,
+                                e('h4', { className: 'text-sm font-bold text-n-neon leading-none' }, 'NULL_AI_SYS'),
+                                e('span', { className: 'text-[9px] text-n-success flex items-center gap-1 mt-1' }, e('div',{className:'w-1.5 h-1.5 bg-n-success rounded-full animate-pulse'}), 'ONLINE')
+                            )
+                        ),
+                        e('button', { className: 'text-gray-400 hover:text-white' }, '✕')
+                    ),
+                    /* Message Area */
+                    e('div', { className: 'p-4 flex flex-col gap-3 h-[300px] overflow-y-auto bg-black/40 text-xs' },
+                        msgs.map(function(m, i) {
+                            var isUser = m.sender === 'USER';
+                            var isSys = m.sender === 'SYSTEM';
+                            return e('div', { key: i, className: 'flex ' + (isUser ? 'justify-end' : 'justify-start') },
+                                e('div', { 
+                                    className: 'max-w-[80%] p-3 rounded-xl ' + 
+                                        (isUser ? 'bg-n-neon text-black rounded-br-none' : 
+                                         isSys ? 'bg-red-900/50 text-red-400 border border-red-500/50 font-mono text-[10px]' : 
+                                         'bg-white/10 text-gray-200 border border-white/5 rounded-bl-none')
+                                }, m.text)
+                            )
+                        })
+                    ),
+                    /* Input Area */
+                    e('div', { className: 'p-2 bg-black/60 border-t border-white/10 flex items-center gap-2' },
+                        e('input', {
+                            type: 'text', value: input, onChange: function(e){setInput(e.target.value);}, onKeyDown: handleKeyDown,
+                            placeholder: 'メッセージを入力...',
+                            className: 'flex-1 bg-transparent border-none outline-none text-xs text-white px-2',
+                            disabled: isSending
+                        }),
+                        e('button', { 
+                            onClick: handleSend, disabled: isSending,
+                            className: 'w-8 h-8 rounded-full bg-n-neon text-black flex items-center justify-center hover:scale-110 transition-transform disabled:opacity-50'
+                        }, '▶︎')
+                    )
+                ),
+                /* Toggle Button */
+                e(motion.button, {
+                    onClick: function(){ SFX.click(); setIsOpen(!isOpen); },
+                    className: 'w-14 h-14 md:w-16 md:h-16 rounded-full bg-n-black border-[2px] border-n-neon shadow-[0_0_20px_rgba(0,243,255,0.4)] flex items-center justify-center relative hover:scale-105 transition-transform overflow-hidden group',
+                    initial: { scale: 0 }, animate: { scale: 1 }, transition: { type: 'spring', stiffness: 200, delay: 2.2 }
+                },
+                    e('img', { src: IMG.faceClose, className: 'absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity' }),
+                    e('div', { className: 'absolute -top-1 -right-1 w-4 h-4 bg-n-alert rounded-full border-2 border-n-black animate-pulse' })
+                )
+            );
+        }
+
+        function App() {
+            var _s = useState(false); var showGame = _s[0]; var setShowGame = _s[1];
+
+            return e('div', { className: 'text-n-white min-h-screen relative' },
+                e(BackgroundSlider),
+                e(HeroSection),
+                e(Divider),
+                e(CMSection),
+                e(Divider),
+                e(BenefitSection),
+                e(Divider),
+                e(DemoSection),
+                e(Divider),
+                e(ServiceSection),
+                e(Divider),
+                e(ContactSection),
+                /* Footer */
+                e('footer', { className: 'py-20 text-center relative z-10 space-y-8' },
+                    e(Divider),
+                    e('div', { className: 'pt-12 space-y-6 max-w-xl mx-auto px-6' },
+                        e('p', { className: 'text-sm text-gray-400 mb-8 border border-n-neon/20 p-4 bg-n-neon/5 font-bold' },
+                            '『ただのWebサイトではありません。お客様が思わず遊んでしまうミニゲームを搭載。クリアした人にだけ「割引クーポン」を発行し、来店率を爆上げします。』'
+                        ),
+                        e(SBtn, {
+                            tag: 'button', p: {
+                                className: 'px-10 py-5 border-2 border-n-neon text-n-neon font-display font-bold text-lg tracking-widest hover:bg-n-neon hover:text-black transition-all cursor-pointer shadow-[0_0_20px_var(--accent-glow)]',
+                                onClick: function () { setShowGame(true); }
+                            }
+                        }, '▶️ クーポンを獲得する (GAME START)'),
+                        /* SNS Links moved here */
+                        e('div', { className: 'flex justify-center gap-6 mt-12 mb-8 opacity-40' },
+                            e('a', { href: LINKS.tiktok, target: '_blank', className: 'hover:text-n-neon transition-colors font-mono text-[10px]' }, 'TIKTOK'),
+                            e('a', { href: LINKS.insta, target: '_blank', className: 'hover:text-n-neon transition-colors font-mono text-[10px]' }, 'INSTAGRAM'),
+                            e('a', { href: LINKS.threads, target: '_blank', className: 'hover:text-n-neon transition-colors font-mono text-[10px]' }, 'THREADS')
+                        ),
+                        e('p', { className: 'text-[11px] text-gray-700 tracking-widest font-mono' }, '\u00a9 2026 PROJECT NULL. All rights reserved.'),
+                        e('div', { className: 'pt-2' }, 
+                            e('a', { href: '#/about-business', className: 'text-[10px] text-gray-700 hover:text-white transition-colors font-mono cursor-pointer', onClick: function() { SFX.click(); } }, '事業者情報 (特定商取引法に基づく表記相当)')
+                        )
+                    )
+                ),
+                /* Floating Chat */
+                e(FloatingChat),
+                /* FAB - Floating Action Button */
+                e(motion.a, {
+                    href: LINKS.line, target: '_blank', rel: 'noopener noreferrer',
+                    className: 'fixed bottom-6 right-[100px] md:bottom-10 md:right-[120px] z-[9990] bg-n-neon text-n-black w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_40px_rgba(0,243,255,0.7)] hover:scale-105 transition-all outline-none',
                     onMouseEnter: function () { SFX.hover(); },
                     onClick: function () { SFX.click(); },
                     initial: { opacity: 0, scale: 0 }, animate: { opacity: 1, scale: 1 }, transition: { delay: 2.5, type: 'spring', stiffness: 200 }
